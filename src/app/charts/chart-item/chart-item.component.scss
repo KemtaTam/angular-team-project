@@ -1,0 +1,52 @@
+.chart {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	width: 800px;
+}
+
+.fullScreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	background-color: white;
+
+	canvas{
+		max-height: 90vh;
+	}
+}
+
+.wrap {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.h2 {
+	padding-top: 20px;
+	text-align: center;
+}
+
+.button,
+.buttonFullScreen {
+	background-color: transparent;
+	border: none;
+
+	img {
+		width: 30px;
+	}
+}
+.buttonFullScreen {
+	padding: 10px;
+
+	img {
+		width: 3vw;
+	}
+}
