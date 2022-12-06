@@ -1,0 +1,49 @@
+<div class="table">
+  <table mat-table multiTemplateDataRows [dataSource]="builtInArr" class="mat-elevation-z8"
+         matSort matSortActive="office_id" >
+
+    <ng-container matColumnDef="office_id" >
+      <th mat-header-cell *matHeaderCellDef>Офис</th>
+      <td mat-cell  *matCellDef="let row">{{row}}</td>
+    </ng-container>
+
+    <!-- Title Column -->
+    <ng-container matColumnDef="wh_id">
+      <th mat-header-cell *matHeaderCellDef>Склад</th>
+      <td mat-cell *matCellDef="let row"></td>
+    </ng-container>
+
+    <!-- State Column -->
+    <ng-container matColumnDef="dt_date">
+      <th mat-header-cell *matHeaderCellDef>Дата</th>
+      <td mat-cell *matCellDef="let row"></td>
+    </ng-container>
+
+    <!-- Created Column -->
+    <ng-container matColumnDef="qty">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+        Количество
+      </th>
+      <td mat-cell *matCellDef="let row"></td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="expandedDetailTwo">
+      <td mat-cell class="built-in" *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+        <div class="example-element-detail" [@detailExpand1]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+          <app-table-second-child [warehouse]="builtInArr"></app-table-second-child>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"
+        [class.example-expanded-row]="displayedColumns === row"
+        (click)="expandedElement = expandedElement === row ? null : row" (click)="onClick(row)"></tr>
+    <tr mat-row  *matRowDef="let row; columns: ['expandedDetailTwo']"  class="example-detail-row"></tr>
+  </table>
+</div>
+
+
+

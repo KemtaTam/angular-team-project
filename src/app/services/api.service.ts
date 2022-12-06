@@ -25,8 +25,8 @@ export class ApiService {
 		return this.http.get<IData0[]>(`${this.baseURL}/data0`).pipe(
 			delay(500),
 			catchError((error) => {
-				console.log('Error: ', error.message);
-				return throwError(() => error);
+				console.log('Error: ', error.message)
+				return throwError(() => error)
 			})
 		)
 	}
@@ -35,8 +35,18 @@ export class ApiService {
 		return this.http.get<IData1[]>(`${this.baseURL}/data1`).pipe(
 			delay(500),
 			catchError((error) => {
-				console.log('Error: ', error.message);
-				return throwError(() => error);
+				console.log('Error: ', error.message)
+				return throwError(() => error)
+			})
+		)
+	}
+
+	getWarehouses(parametrs: string) {
+		return this.http.get<IData1[]>(`${this.baseURL}/data1?${parametrs}`).pipe(
+			delay(500),
+			catchError((error) => {
+				console.log('Error: ', error.message)
+				return throwError(() => error)
 			})
 		)
 	}

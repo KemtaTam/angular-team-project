@@ -6,6 +6,10 @@ const routes: Routes = [
 	{
 		path: 'table',
 		loadChildren: () => TableModule
+	},
+	{
+		path: '**',
+		loadChildren: () => TableModule
 	}
 ]
 
