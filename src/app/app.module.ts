@@ -16,7 +16,7 @@ import { AppComponent } from './app.component'
         AppRoutingModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        ChartsModule,
+        ChartsModule
     ]
 })
 export class AppModule {}

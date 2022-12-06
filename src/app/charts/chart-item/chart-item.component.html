@@ -1,4 +1,14 @@
 <div class="chart" [ngClass]="{ fullScreen: isFull }" #chartWrapper>
+	<div class="wrap">
+		<span></span>
+		<h2 class="h2">{{ chartItem.title }}</h2>
+		<button
+			[ngClass]="{ button: !isFull, buttonFullScreen: isFull }"
+			(click)="fullScreenHandler()"
+		>
+			<img src="assets/images/fullscreen.svg" alt="fullscreen" />
+		</button>
+	</div>
 	<canvas #canvas class="canvas">
 		{{ chart }}
 	</canvas>

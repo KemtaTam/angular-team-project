@@ -1,1 +1,8 @@
-<pre>{{data1 | json}}</pre>
+<div class="charts">
+	<app-preloader *ngIf="isLoading; else content"></app-preloader>
+	<ng-template #content>
+		<div *ngFor="let item of configuredData">
+			<app-chart-item [chartItem]="item"></app-chart-item>
+		</div>
+	</ng-template>
+</div>

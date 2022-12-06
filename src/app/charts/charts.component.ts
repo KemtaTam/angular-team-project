@@ -1,4 +1,5 @@
-import { IData1, ApiService } from './../services/api.service';
+import { ChartsDataService, IChartWithOptions } from './services/charts-data.service';
+import { ApiService } from './../services/api.service';
 import { Component, OnInit } from '@angular/core'
 
 @Component({
@@ -7,17 +8,17 @@ import { Component, OnInit } from '@angular/core'
 	styleUrls: ['./charts.component.scss']
 })
 export class ChartsComponent implements OnInit{
-	data1: IData1[] | null = null
 	error = ''
-	isLoading = false
+	isLoading = true
+	configuredData: IChartWithOptions[] = []
 
-	constructor(private apiService: ApiService) {}
+	constructor(private apiService: ApiService, private chartsDataService: ChartsDataService) {}
 	
 	ngOnInit(): void {
 		this.apiService.getData1().subscribe({
 			next: (res) => {
-				this.isLoading = true
-				this.data1 = res
+				this.chartsDataService.setChartsData(res)
+				this.configuredData = this.chartsDataService.chartsWithOptions
 			},
 			error: (error) => {
 				this.error = error.message

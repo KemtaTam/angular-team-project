@@ -1,3 +1,4 @@
+import { SharedModule } from './../shared/shared.module';
 
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core'
@@ -11,10 +12,12 @@ import { ChartItemComponent } from './chart-item/chart-item.component';
 		CommonModule,
 		RouterModule.forChild([
 			{path: 'charts', component: ChartsComponent}
-		])
+		]),
+		SharedModule
 	],
 	exports: [
-		ChartsComponent
+		ChartsComponent,
+		ChartItemComponent
 	]
 })
 export class ChartsModule {}
