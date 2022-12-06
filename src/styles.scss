@@ -1,4 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
+/* ----------default------------ */
+html {
+	box-sizing: border-box;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+*,
+*::after,
+*::before {
+	box-sizing: inherit;
+}
+
+ul[class],
+ol[class] {
+	padding: 0;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+	margin: 0;
+}
+
+ul {
+	list-style: none;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+button {
+	cursor: pointer;
+}
+
+a {
+	text-decoration: none;
+}
+/* ----------default------------ */
+
+
