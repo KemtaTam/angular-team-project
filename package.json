@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+	"server": "json-server-auth -w server/db.json -p 3001"
   },
   "private": true,
   "dependencies": {
