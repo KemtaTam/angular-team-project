@@ -1,15 +1,11 @@
 {
-  "printWidth": 120,
-  "trailingComma": "none",
-  "tabWidth": 4,
-  "semi": false,
-  "singleQuote": true,
-  "jsxSingleQuote": false,
-  "arrowParens": "always",
-  "max-len": [
-    "error",
-    140,
-    2
-  ],
-  "useTabs": true
+	"printWidth": 120,
+	"trailingComma": "none",
+	"tabWidth": 4,
+	"semi": false,
+	"singleQuote": true,
+	"jsxSingleQuote": false,
+	"arrowParens": "always",
+	"max-len": ["error", 140, 2],
+	"useTabs": true
 }
