@@ -5,6 +5,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FormControl, FormGroup } from '@angular/forms'
 import { MatSort } from '@angular/material/sort'
 import { MatTableDataSource } from '@angular/material/table'
+import { Router } from '@angular/router'
 @Component({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
@@ -35,7 +36,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		start: new FormControl<Date | null>(null),
 		end: new FormControl<Date | null>(null)
 	})
-	constructor(private apiService: ApiService) {}
+	constructor(private apiService: ApiService, private router: Router) {}
 
 	ngAfterViewInit(): void {
 		this.sub.push(
@@ -102,6 +103,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 					})
 			)
 		}
+	}
+	getChartOffice(key: any) {
+		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
 	ngOnDestroy(): void {
 		for (let sub of this.sub) {
