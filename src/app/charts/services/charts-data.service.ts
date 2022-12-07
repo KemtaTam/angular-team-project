@@ -61,13 +61,21 @@ export class ChartsDataService {
 		return uniqueIds
 	}
 
+	private configureDate(dates: string[]): string[] {
+		const newDates = []
+		for(const date of dates) {
+			newDates.push(date.slice(8, 10) + "-" + date.slice(5, 7) + "-" + date.slice(0, 4))
+		}
+		return newDates
+	}
+
 	private configureData(uniqueIds: number[]): IChartWithOptions[] {
 		const charts: IChartEl[] = []
 
 		for (const id of uniqueIds) {
 			let chartElData: IData1[] = []
 			let additionalData: IAdditionalData[] = []
-			const dates: string[] = []
+			let dates: string[] = []
 			const unnecessaryKeys = ['office_id', 'dt_date', 'wh_id']
 
 			//only this id
@@ -77,6 +85,7 @@ export class ChartsDataService {
 			for (const el of chartElData) {
 				dates.push(el.dt_date)
 			}
+			dates = this.configureDate(dates);
 
 			//keys that will be displayed on the chart
 			let keys = Object.keys(chartElData[0]) //take the keys of any element
@@ -126,7 +135,7 @@ export class ChartsDataService {
 		//add configured data to resulting chart
 		resultArr.push({
 			title: `${this.paramsData?.type} № ${this.paramsData?.id}`, //todo
-			dates: [...allDates],
+			dates: this.configureDate([...allDates]),
 			additionalData
 		})
 
