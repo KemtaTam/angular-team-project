@@ -46,6 +46,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		const dateStart = this.getDate()?.dateStart
 		const dateEnd = this.getDate()?.dateEnd
 		let filterObj$
+
 		if (this.isCorrectFilterDate()) {
 			console.log(dateStart, dateEnd)
 			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
@@ -57,7 +58,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	getMinMax() {
 		const today = new Date()
 
-		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 5))
+		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 6))
 		console.log(today, sixMonthAgo)
 		return {
 			today,
@@ -116,6 +117,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		this.mapUniqueOffice = new Map()
 		const dateStart = this.getDate()?.dateStart
 		const dateEnd = this.getDate()?.dateEnd
+		console.log('Date = ', dateStart, dateEnd)
 		let filterObj$
 		if (this.isCorrectFilterDate()) {
 			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
@@ -165,9 +167,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	getFullDate(date: Date): string {
 		if (!date) return ''
 		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
-		let month = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
+		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
+		let month = rightMonth < 10 ? `0${rightMonth}` : rightMonth
 		let year = date.getFullYear()
-		console.log(year + '-' + month + '-' + day)
 		return `${year + '-' + month + '-' + day}`
 	}
 	ngOnDestroy(): void {

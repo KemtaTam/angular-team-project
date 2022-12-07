@@ -84,9 +84,9 @@ export class TableChildComponent {
 	getFullDate(date: Date): string {
 		if (!date) return ''
 		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
-		let month = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
+		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
+		let month = rightMonth < 10 ? `0${rightMonth}` : rightMonth
 		let year = date.getFullYear()
-		console.log(year + '-' + month + '-' + day)
 		return `${year + '-' + month + '-' + day}`
 	}
 }
