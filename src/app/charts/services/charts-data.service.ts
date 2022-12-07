@@ -1,3 +1,4 @@
+import { IParamsData } from './../charts.component'
 import { Injectable } from '@angular/core'
 import { ChartConfiguration } from 'chart.js'
 
@@ -23,23 +24,33 @@ interface ILegendTitle {
 	qty: string
 }
 
+type ChartType = 'general' | 'office' | 'wh'
+
 @Injectable({
 	providedIn: 'root'
 })
 export class ChartsDataService {
-	chartsData: IData1[] | null = []
-	uniqueWhIds: number[] = []
-	chartsWithOptions: IChartWithOptions[] = []
-	legendTitle: ILegendTitle = {
+	private chartsData: IData1[] | null = []
+	private uniqueWhIds: number[] = []
+	private legendTitle: ILegendTitle = {
 		qty: 'Количество'
 	}
-	
+	private paramsData?: IParamsData
+
+	chartsWithOptions: IChartWithOptions[] = []
+	chartsWithSumOptions: IChartWithOptions[] = []
+
 	constructor() {}
 
-	setChartsData(data: IData1[]) {
+	setChartsData(data: IData1[], paramsData?: IParamsData) {
 		this.chartsData = data
 		this.uniqueWhIds = [...this.getUniqueId(this.chartsData)]
-		this.chartsWithOptions = this.configureData(this.uniqueWhIds)
+		if (paramsData) {
+			this.paramsData = paramsData
+			this.chartsWithSumOptions = this.configureDataToSum()
+		} else {
+			this.chartsWithOptions = this.configureData(this.uniqueWhIds)
+		}
 	}
 
 	private getUniqueId(data: IData1[]): Set<number> {
@@ -87,6 +98,41 @@ export class ChartsDataService {
 		return this.addOptionsToData(charts)
 	}
 
+	private configureDataToSum() {
+		let chartElData: IData1[] = []
+		const allDates = new Set<string>()
+		const resultArr: IChartEl[] = []
+		const unnecessaryKeys = ['office_id', 'dt_date', 'wh_id']
+		let additionalData: IAdditionalData[] = []
+
+		//data only with this id
+		chartElData = this.chartsData!.filter((dataEl) => {
+			return dataEl[this.paramsData?.type as keyof IData1] === Number(this.paramsData?.id)
+		})
+
+		//get unique date
+		for (const el of chartElData) {
+			allDates.add(el.dt_date)
+		}
+
+		//keys that will displayed on the chart
+		let keys = Object.keys(chartElData[0]) //take the keys of any such element
+		for (const unnecessaryKey of unnecessaryKeys) {
+			keys = keys.filter((el) => !el.includes(unnecessaryKey))
+		}
+
+		additionalData = this.createAdditionalSumData(keys, allDates, chartElData)
+
+		//add configured data to resulting chart
+		resultArr.push({
+			title: `${this.paramsData?.type} № ${this.paramsData?.id}`, //todo
+			dates: [...allDates],
+			additionalData
+		})
+
+		return this.addOptionsToData(resultArr)
+	}
+
 	private createAdditionalData(keys: string[], chartElData: IData1[]): IAdditionalData[] {
 		const additionalData: IAdditionalData[] = []
 
@@ -103,6 +149,35 @@ export class ChartsDataService {
 				tension: 0.5,
 				backgroundColor: 'red',
 				borderColor: 'red'
+			})
+		}
+
+		return additionalData
+	}
+
+	private createAdditionalSumData(keys: string[], allDates: Set<string>, chartElData: IData1[]): IAdditionalData[] {
+		const additionalData: IAdditionalData[] = []
+
+		for (const key of keys) {
+			const arrWithValuesOfThisKey: number[] = []
+
+			for (const date of allDates) {
+				//array with this date
+				const dateFilters = chartElData.filter((el) => el.dt_date === date)
+
+				const sumOfValuesWithThisDate = dateFilters.reduce(
+					(a, chartDataEl) => a + (chartDataEl[key as keyof IData1] as number),
+					0
+				)
+				arrWithValuesOfThisKey.push(sumOfValuesWithThisDate)
+			}
+
+			additionalData.push({
+				label: key,
+				data: arrWithValuesOfThisKey,
+				tension: 0.5,
+				backgroundColor: 'blue',
+				borderColor: 'blue'
 			})
 		}
 
