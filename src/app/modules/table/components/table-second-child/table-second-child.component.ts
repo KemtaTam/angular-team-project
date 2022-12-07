@@ -14,11 +14,10 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 	]
 })
 export class TableSecondChildComponent implements OnInit {
-	@Input() warehouse?: any
+	@Input() uniqueMap?: any
+
 	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
 	expandedElementTwo: any
-	ngOnInit() {
-		console.log(this.warehouse)
-	}
+	ngOnInit() {}
 	onClick(elem: any) {}
 }

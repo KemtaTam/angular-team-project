@@ -22,35 +22,44 @@ export class TableChildComponent {
 	clickedRows = new Set<IData0>()
 	expandedElement: any
 	expandedElementTwo: any
-	currentOffice: any
-	isLoadingTwo: any
 	isLoading = false
-	pushBuiltInArr: any
+	dataArrTwo: any = []
+	uniqueMap?: any
+	currentObj: any
 	@Input() builtInArr?: any
 	constructor(private apiService: ApiService) {}
 
 	ngAfterViewInit(): void {}
-	onClick(elem: any) {
-		if (this.currentOffice !== elem) {
-			this.currentOffice = elem
-			this.isLoadingTwo = true
-			let warehousesSet = new Set()
-			let warehouses$ = this.apiService.getWarehouses(`office_id=${elem.key}&wh_id=${elem.wh_id}`)
-			this.sub.push(
-				warehouses$
-					.pipe(
-						finalize(() => {
-							this.isLoadingTwo = false
-						})
-					)
-					.subscribe((data) => {
-						console.log(data)
-						data.forEach((item) => warehousesSet.add(item.wh_id))
-						console.log(warehousesSet)
-						this.pushBuiltInArr = Array.from(warehousesSet)
-						return data
+	onClickTwo(elem: any) {
+		if (this.currentObj === elem) return
+		this.currentObj = elem
+		this.isLoading = true
+		let mapWhId = new Map()
+		let data$ = this.apiService.getDataWithParameter(`wh_id=${elem.key}`)
+		this.sub.push(
+			data$
+				.pipe(
+					finalize(() => {
+						this.isLoading = false
 					})
-			)
+				)
+				.subscribe((data) => {
+					data.forEach((item, index) => {
+						mapWhId.set(item.dt_date, {
+							qty: []
+						})
+						const currentDate = mapWhId.get(item.dt_date)
+						currentDate.qty.push(item.qty)
+					})
+
+					this.uniqueMap = mapWhId
+					return data
+				})
+		)
+	}
+	ngOnDestroy(): void {
+		for (let sub of this.sub) {
+			sub?.unsubscribe()
 		}
 	}
 }

@@ -41,7 +41,7 @@ export class ApiService {
 		)
 	}
 
-	getWarehouses(parametrs: string) {
+	getDataWithParameter(parametrs: string) {
 		return this.http.get<IData1[]>(`${this.baseURL}/data1?${parametrs}`).pipe(
 			delay(500),
 			catchError((error) => {

@@ -1,7 +1,10 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core'
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core'
 import { ApiService, IData0 } from '../../../services/api.service'
 import { delay, finalize, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
+import { FormControl, FormGroup } from '@angular/forms'
+import { MatSort } from '@angular/material/sort'
+import { MatTableDataSource } from '@angular/material/table'
 @Component({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
@@ -26,7 +29,12 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	builtInArr: any = []
 	expandedElementTwo: any
 	isLoading = false
+	warehousesMap: any
 	dis = ['hi', 'hi2', 'h3', 'h4']
+	range = new FormGroup({
+		start: new FormControl<Date | null>(null),
+		end: new FormControl<Date | null>(null)
+	})
 	constructor(private apiService: ApiService) {}
 
 	ngAfterViewInit(): void {
@@ -44,25 +52,27 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 						if (!this.mapUniqueOffice.has(elem.office_id)) {
 							this.mapUniqueOffice.set(elem.office_id, {
 								officeId: elem.office_id,
-								items: []
+								items: [],
+								totalQty: 0
 							})
 						}
-						let result = this.mapUniqueOffice.get(elem.office_id)
-						result.items.push(elem)
+						let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
+						uniqueOffice.totalQty += elem.qty
+						uniqueOffice.items.push(elem)
 					})
 
 					return elem
 				})
 		)
-
-		console.log(this.mapUniqueOffice)
 	}
+
 	onClick(elem: any) {
 		if (this.currentOffice !== elem) {
 			this.currentOffice = elem
 			this.isLoading = true
-			let warehousesSet = new Set()
-			let warehouses$ = this.apiService.getWarehouses(`office_id=${elem.key}`)
+			let map = new Map()
+			let warehouses$ = this.apiService.getDataWithParameter(`office_id=${elem.key}`)
+
 			this.sub.push(
 				warehouses$
 					.pipe(
@@ -72,8 +82,22 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 					)
 					.subscribe((data) => {
 						console.log(data)
-						data.forEach((item) => warehousesSet.add(item.wh_id))
-						this.builtInArr = Array.from(warehousesSet)
+
+						data.forEach((item) => {
+							if (!map.has(item.wh_id)) {
+								map.set(item.wh_id, {
+									wh_id: item.wh_id,
+									items: [],
+									totalQty: 0
+								})
+							}
+
+							const warehouses = map.get(item.wh_id)
+							warehouses.totalQty += item.qty
+							warehouses.items.push(item)
+							console.log(warehouses)
+						})
+						this.warehousesMap = map
 						return data
 					})
 			)
