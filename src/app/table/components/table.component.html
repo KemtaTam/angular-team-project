@@ -1,17 +1,5 @@
-<mat-form-field appearance="fill">
-  <mat-label>Enter a date range</mat-label>
-  <mat-date-range-input [formGroup]="range" [min]="minDate" [max]="maxDate" [rangePicker]="picker">
-  <input matStartDate formControlName="start" placeholder="Start date">
-  <input matEndDate formControlName="end" placeholder="End date">
-  </mat-date-range-input>
-  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-date-range-picker #picker></mat-date-range-picker>
-</mat-form-field>
-<button (click)="getData()">Обновить</button>
-
-
-  <div class="table mat-elevation-z8">
-    <table mat-table multiTemplateDataRows [dataSource]="mapUniqueOffice | keyvalue" class="mat-elevation-z8">
+<div class="table mat-elevation-z8">
+    <table mat-table multiTemplateDataRows [dataSource]="officeMap | keyvalue" class="mat-elevation-z8">
 
       <ng-container matColumnDef="office_id" >
         <th mat-header-cell *matHeaderCellDef>Офис</th>
@@ -46,7 +34,7 @@
               <app-preloader></app-preloader>
             </ng-container>
             <ng-template #tableBlock>
-              <app-table-child [dateObj]="range" [builtInArr]="warehousesMap"></app-table-child>
+              <app-table-child [dateObj]="dateObj" [builtInArr]="warehousesMap"></app-table-child>
             </ng-template >
           </div>
         </td>

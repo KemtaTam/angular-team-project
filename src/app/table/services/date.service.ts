@@ -15,4 +15,22 @@ export class DateService {
 
 		return local ? `${day + '/' + month + '/' + year}` : `${year + '-' + month + '-' + day}`
 	}
+
+	isCorrectFilterDate(dateStart: Date | string | undefined, dateEnd: Date | string | undefined) {
+		if (!(dateStart && dateEnd)) return false
+		return true
+	}
+
+	getDate(dateStart: Date | undefined | null, dateEnd: Date | undefined | null) {
+		const startDate = dateStart
+		const endDate = dateEnd
+		if (!(startDate && endDate)) return
+		const dateStartStr = this.getFullDate(startDate)
+		const dateEndStr = this.getFullDate(endDate)
+
+		return {
+			dateStart: dateStartStr,
+			dateEnd: dateEndStr
+		}
+	}
 }

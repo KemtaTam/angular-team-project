@@ -12,8 +12,15 @@ import { MatDatepickerModule } from '@angular/material/datepicker'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import { PreloaderComponent } from './components/preloader/preloader.component'
+import { MainContentComponent } from './main-content/main-content.component'
 @NgModule({
-	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent, PreloaderComponent],
+	declarations: [
+		TableComponent,
+		TableChildComponent,
+		TableSecondChildComponent,
+		PreloaderComponent,
+		MainContentComponent
+	],
 	imports: [
 		CommonModule,
 		MatIconModule,
@@ -22,7 +29,7 @@ import { PreloaderComponent } from './components/preloader/preloader.component'
 		MatInputModule,
 		MatDatepickerModule,
 		ReactiveFormsModule,
-		RouterModule.forChild([{ path: 'table', component: TableComponent }])
+		RouterModule.forChild([{ path: 'main-content', component: MainContentComponent }])
 	],
 	exports: [TableComponent],
 	providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }]

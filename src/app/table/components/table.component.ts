@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, Input, OnDestroy, ViewChild } from '@angular/core'
 import { ApiService, IData0 } from '../../services/api.service'
 import { delay, finalize, Observable, Subscription } from 'rxjs'
 import { filter, map } from 'rxjs/operators'
@@ -23,32 +23,27 @@ import { DateService } from '../services/date.service'
 export class TableComponent implements AfterViewInit, OnDestroy {
 	sub: Subscription[] = []
 	data0: IData0[] = []
-	mapUniqueOffice: any = new Map()
+	// mapUniqueOffice: any = new Map()
 	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
 	expandedElement: any
 	currentObj?: IData0 | null
 	builtInArr: any = []
 	isLoading = false
 	warehousesMap: any
-	range = new FormGroup({
-		start: new FormControl<Date | null>(null),
-		end: new FormControl<Date | null>(null)
-	})
-
-	minDate = this.getMinMax().sixMonthAgo
-	maxDate = this.getMinMax().today
+	@Input() dateObj?: any
+	@Input() officeMap?: any
 	isFilter = false
 	constructor(private apiService: ApiService, private router: Router, private dateService: DateService) {}
 
 	ngAfterViewInit(): void {
-		this.mapUniqueOffice = new Map()
+		this.officeMap = new Map()
 		this.isFilter = true
 
-		const dateStart = this.getDate()?.dateStart
-		const dateEnd = this.getDate()?.dateEnd
+		const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
+		const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
 		let filterObj$
 
-		if (this.isCorrectFilterDate()) {
+		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			console.log(dateStart, dateEnd)
 			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
 		} else {
@@ -56,26 +51,17 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		}
 		this.makeSub(filterObj$)
 	}
-	getMinMax() {
-		const today = new Date()
 
-		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 6))
-		console.log(today, sixMonthAgo)
-		return {
-			today,
-			sixMonthAgo
-		}
-	}
 	onClick(elem: any) {
 		if (this.currentObj !== elem) {
-			const dateStart = this.getDate()?.dateStart
-			const dateEnd = this.getDate()?.dateEnd
+			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
+			const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
 			console.log(dateStart, dateEnd)
 			this.currentObj = elem
 			this.isLoading = true
 			let warehousesMap = new Map()
 			let warehouses$
-			if (this.isCorrectFilterDate()) {
+			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 				console.log(dateStart, dateEnd)
 				warehouses$ = this.apiService.getDataWithParameter(
 					`office_id=${elem.key}&dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`
@@ -114,19 +100,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	getChartOffice(key: any) {
 		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
-	getData() {
-		this.mapUniqueOffice = new Map()
-		const dateStart = this.getDate()?.dateStart
-		const dateEnd = this.getDate()?.dateEnd
-		console.log('Date = ', dateStart, dateEnd)
-		let filterObj$
-		if (this.isCorrectFilterDate()) {
-			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
-		} else {
-			filterObj$ = this.apiService.getData1()
-		}
-		this.makeSub(filterObj$)
-	}
+
 	makeSub(observable: Observable<any>) {
 		this.sub.push(
 			observable
@@ -137,37 +111,20 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 				)
 				.subscribe((item: any) => {
 					item.forEach((elem: any) => {
-						if (!this.mapUniqueOffice.has(elem.office_id)) {
-							this.mapUniqueOffice.set(elem.office_id, {
+						if (!this.officeMap.has(elem.office_id)) {
+							this.officeMap.set(elem.office_id, {
 								officeId: elem.office_id,
 								items: [],
 								totalQty: 0
 							})
 						}
-						let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
+						let uniqueOffice = this.officeMap.get(elem.office_id)
 						uniqueOffice.totalQty += elem.qty
 						uniqueOffice.items.push(elem)
 					})
 					return item
 				})
 		)
-	}
-	isCorrectFilterDate() {
-		if (!(this.range.value.start && this.range.value.end)) return false
-		return true
-	}
-
-	getDate() {
-		const startDate = this.range.value.start
-		const endDate = this.range.value.end
-		if (!(startDate && endDate)) return
-		const dateStartStr = this.dateService.getFullDate(startDate)
-		const dateEndStr = this.dateService.getFullDate(endDate)
-
-		return {
-			dateStart: dateStartStr,
-			dateEnd: dateEndStr
-		}
 	}
 
 	ngOnDestroy(): void {
