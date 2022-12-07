@@ -89,7 +89,7 @@ export class ChartsDataService {
 			//add configured data to resulting chart
 			charts.push({
 				//all elements have the same title accordingly we take any
-				title: chartElData[0].wh_id.toString(),
+				title: `wh_id № ${chartElData[0].wh_id}`,
 				dates,
 				additionalData
 			})
