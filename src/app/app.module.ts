@@ -1,5 +1,4 @@
-import { TableModule } from './modules/table/table.module';
-import { TableComponent } from './modules/table/components/table.component';
+import { TableModule } from './table/table.module';
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'

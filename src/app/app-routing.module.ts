@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { TableModule } from './modules/table/table.module'
 
 const routes: Routes = [
 ]
