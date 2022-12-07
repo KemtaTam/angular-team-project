@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core'
 import { finalize, Subscription } from 'rxjs'
 import { ApiService, IData0 } from '../../../../services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
+import { Router } from '@angular/router'
 
 @Component({
 	selector: 'app-table-child',
@@ -27,7 +28,7 @@ export class TableChildComponent {
 	uniqueMap?: any
 	currentObj: any
 	@Input() builtInArr?: any
-	constructor(private apiService: ApiService) {}
+	constructor(private apiService: ApiService, private router: Router) {}
 
 	ngAfterViewInit(): void {}
 	onClickTwo(elem: any) {
@@ -56,6 +57,10 @@ export class TableChildComponent {
 					return data
 				})
 		)
+	}
+	getChartWhId(key: any) {
+		console.log(key)
+		this.router.navigate(['/charts'], { queryParams: { wh_id: `${key}` } })
 	}
 	ngOnDestroy(): void {
 		for (let sub of this.sub) {
