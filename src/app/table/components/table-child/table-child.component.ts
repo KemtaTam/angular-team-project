@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { finalize, Subscription } from 'rxjs'
+import { finalize, map, Subscription } from 'rxjs'
 import { ApiService, IData0 } from '../../../services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
@@ -28,15 +28,28 @@ export class TableChildComponent {
 	uniqueMap?: any
 	currentObj: any
 	@Input() builtInArr?: any
+	@Input() dateObj?: any
 	constructor(private apiService: ApiService, private router: Router) {}
 
 	ngAfterViewInit(): void {}
 	onClickTwo(elem: any) {
 		if (this.currentObj === elem) return
+		console.log('THIS.DATEOBJ = ', this.dateObj)
+		const dateStartStr = this.getFullDate(this.dateObj?.value.start)
+		const dateEndStr = this.getFullDate(this.dateObj?.value.end)
+		console.log(dateStartStr, dateEndStr)
 		this.currentObj = elem
 		this.isLoading = true
 		let mapWhId = new Map()
-		let data$ = this.apiService.getDataWithParameter(`wh_id=${elem.key}`)
+		let data$
+		if (dateStartStr && dateEndStr) {
+			data$ = this.apiService.getDataWithParameter(
+				`wh_id=${elem.key}&dt_date_gte=${dateStartStr}&dt_date_lte=${dateEndStr}`
+			)
+		} else {
+			data$ = this.apiService.getDataWithParameter(`wh_id=${elem.key}`)
+		}
+
 		this.sub.push(
 			data$
 				.pipe(
@@ -45,6 +58,7 @@ export class TableChildComponent {
 					})
 				)
 				.subscribe((data) => {
+					// console.log(data)
 					data.forEach((item, index) => {
 						mapWhId.set(item.dt_date, {
 							qty: []
@@ -66,5 +80,13 @@ export class TableChildComponent {
 		for (let sub of this.sub) {
 			sub?.unsubscribe()
 		}
+	}
+	getFullDate(date: Date): string {
+		if (!date) return ''
+		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
+		let month = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
+		let year = date.getFullYear()
+		console.log(year + '-' + month + '-' + day)
+		return `${year + '-' + month + '-' + day}`
 	}
 }

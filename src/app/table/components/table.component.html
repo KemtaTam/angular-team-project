@@ -1,15 +1,15 @@
 <mat-form-field appearance="fill">
   <mat-label>Enter a date range</mat-label>
-  <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+  <mat-date-range-input [formGroup]="range" [min]="minDate" [max]="maxDate" [rangePicker]="picker">
   <input matStartDate formControlName="start" placeholder="Start date">
   <input matEndDate formControlName="end" placeholder="End date">
   </mat-date-range-input>
-  <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+<!--  <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>-->
   <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-date-range-picker #picker></mat-date-range-picker>
 </mat-form-field>
-<button>Обновить</button>
-<p>Selected range: {{range.value | json}}</p>
+<button (click)="getData()">Обновить</button>
+
 
 <div class="table mat-elevation-z8">
   <table mat-table multiTemplateDataRows [dataSource]="mapUniqueOffice | keyvalue" class="mat-elevation-z8"
@@ -53,7 +53,7 @@
                   </div>
                 </ng-container>
                 <ng-template #tableBlock>
-                  <app-table-child [builtInArr]="warehousesMap"></app-table-child>
+                  <app-table-child [dateObj]="range" [builtInArr]="warehousesMap"></app-table-child>
                 </ng-template >
             </div>
           </td>

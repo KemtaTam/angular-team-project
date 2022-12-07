@@ -10,8 +10,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { ReactiveFormsModule } from '@angular/forms'
-import { ChartsComponent } from '../../charts/charts.component'
-
+import { MAT_DATE_LOCALE } from '@angular/material/core'
 @NgModule({
 	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent],
 	imports: [
@@ -22,11 +21,9 @@ import { ChartsComponent } from '../../charts/charts.component'
 		MatInputModule,
 		MatDatepickerModule,
 		ReactiveFormsModule,
-		RouterModule.forChild([
-			{ path: 'table', component: TableComponent },
-			{ path: 'charts', component: ChartsComponent }
-		])
+		RouterModule.forChild([{ path: 'table', component: TableComponent }])
 	],
-	exports: [TableComponent]
+	exports: [TableComponent],
+	providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }]
 })
 export class TableModule {}
