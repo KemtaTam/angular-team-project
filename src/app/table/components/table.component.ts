@@ -7,6 +7,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatSort } from '@angular/material/sort'
 import { MatTableDataSource } from '@angular/material/table'
 import { Router } from '@angular/router'
+import { DateService } from '../services/date.service'
 @Component({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
@@ -37,7 +38,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	minDate = this.getMinMax().sixMonthAgo
 	maxDate = this.getMinMax().today
 	isFilter = false
-	constructor(private apiService: ApiService, private router: Router) {}
+	constructor(private apiService: ApiService, private router: Router, private dateService: DateService) {}
 
 	ngAfterViewInit(): void {
 		this.mapUniqueOffice = new Map()
@@ -128,22 +129,27 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 	makeSub(observable: Observable<any>) {
 		this.sub.push(
-			observable.subscribe((elem: any) => {
-				this.data0 = elem
-				this.data0.forEach((elem) => {
-					if (!this.mapUniqueOffice.has(elem.office_id)) {
-						this.mapUniqueOffice.set(elem.office_id, {
-							officeId: elem.office_id,
-							items: [],
-							totalQty: 0
-						})
-					}
-					let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
-					uniqueOffice.totalQty += elem.qty
-					uniqueOffice.items.push(elem)
+			observable
+				.pipe(
+					finalize(() => {
+						this.isLoading = false
+					})
+				)
+				.subscribe((item: any) => {
+					item.forEach((elem: any) => {
+						if (!this.mapUniqueOffice.has(elem.office_id)) {
+							this.mapUniqueOffice.set(elem.office_id, {
+								officeId: elem.office_id,
+								items: [],
+								totalQty: 0
+							})
+						}
+						let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
+						uniqueOffice.totalQty += elem.qty
+						uniqueOffice.items.push(elem)
+					})
+					return item
 				})
-				return elem
-			})
 		)
 	}
 	isCorrectFilterDate() {
@@ -155,8 +161,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		const startDate = this.range.value.start
 		const endDate = this.range.value.end
 		if (!(startDate && endDate)) return
-		const dateStartStr = this.getFullDate(startDate)
-		const dateEndStr = this.getFullDate(endDate)
+		const dateStartStr = this.dateService.getFullDate(startDate)
+		const dateEndStr = this.dateService.getFullDate(endDate)
 
 		return {
 			dateStart: dateStartStr,
@@ -164,14 +170,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		}
 	}
 
-	getFullDate(date: Date): string {
-		if (!date) return ''
-		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
-		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
-		let month = rightMonth < 10 ? `0${rightMonth}` : rightMonth
-		let year = date.getFullYear()
-		return `${year + '-' + month + '-' + day}`
-	}
 	ngOnDestroy(): void {
 		for (let sub of this.sub) {
 			sub?.unsubscribe()

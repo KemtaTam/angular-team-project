@@ -11,8 +11,9 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MAT_DATE_LOCALE } from '@angular/material/core'
+import { PreloaderComponent } from './components/preloader/preloader.component'
 @NgModule({
-	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent],
+	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent, PreloaderComponent],
 	imports: [
 		CommonModule,
 		MatIconModule,

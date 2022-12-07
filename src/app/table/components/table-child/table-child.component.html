@@ -31,12 +31,7 @@
       <td mat-cell class="built-in" *matCellDef="let element" [attr.colspan]="displayedColumns.length">
         <div class="example-element-detail" [@detailExpand1]="element == expandedElement ? 'expanded' : 'collapsed'">
           <ng-container *ngIf="isLoading; else tableBlock">
-            <div class="preloader">
-              <div class="preloader__inner">
-                <img class="preloader__img" src="../../../../assets/preloader/preloader.gif" alt="">
-              </div>
-
-            </div>
+            <app-preloader></app-preloader>
           </ng-container>
           <ng-template #tableBlock>
             <app-table-second-child [uniqueMap]="uniqueMap"></app-table-second-child>

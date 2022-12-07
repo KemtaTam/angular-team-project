@@ -3,6 +3,7 @@ import { finalize, map, Subscription } from 'rxjs'
 import { ApiService, IData0 } from '../../../services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
+import { DateService } from '../../services/date.service'
 
 @Component({
 	selector: 'app-table-child',
@@ -29,14 +30,13 @@ export class TableChildComponent {
 	currentObj: any
 	@Input() builtInArr?: any
 	@Input() dateObj?: any
-	constructor(private apiService: ApiService, private router: Router) {}
+	constructor(private apiService: ApiService, private router: Router, private dateService: DateService) {}
 
 	ngAfterViewInit(): void {}
 	onClickTwo(elem: any) {
 		if (this.currentObj === elem) return
-		console.log('THIS.DATEOBJ = ', this.dateObj)
-		const dateStartStr = this.getFullDate(this.dateObj?.value.start)
-		const dateEndStr = this.getFullDate(this.dateObj?.value.end)
+		const dateStartStr = this.dateService.getFullDate(this.dateObj?.value.start)
+		const dateEndStr = this.dateService.getFullDate(this.dateObj?.value.end)
 		console.log(dateStartStr, dateEndStr)
 		this.currentObj = elem
 		this.isLoading = true
@@ -58,12 +58,12 @@ export class TableChildComponent {
 					})
 				)
 				.subscribe((data) => {
-					// console.log(data)
-					data.forEach((item, index) => {
-						mapWhId.set(item.dt_date, {
+					data.forEach((item) => {
+						let date = item.dt_date
+						mapWhId.set(date, {
 							qty: []
 						})
-						const currentDate = mapWhId.get(item.dt_date)
+						const currentDate = mapWhId.get(date)
 						currentDate.qty.push(item.qty)
 					})
 
@@ -80,13 +80,5 @@ export class TableChildComponent {
 		for (let sub of this.sub) {
 			sub?.unsubscribe()
 		}
-	}
-	getFullDate(date: Date): string {
-		if (!date) return ''
-		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
-		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
-		let month = rightMonth < 10 ? `0${rightMonth}` : rightMonth
-		let year = date.getFullYear()
-		return `${year + '-' + month + '-' + day}`
 	}
 }
