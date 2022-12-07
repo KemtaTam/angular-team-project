@@ -1,4 +1,5 @@
-import { TableModule } from './table/table.module';
+import { SharedModule } from './shared/shared.module'
+import { TableModule } from './table/table.module'
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -19,7 +20,8 @@ import { MatNativeDateModule } from '@angular/material/core'
 		HttpClientModule,
 		ChartsModule,
 		TableModule,
-		MatNativeDateModule
+		MatNativeDateModule,
+		SharedModule
 	]
 })
 export class AppModule {}

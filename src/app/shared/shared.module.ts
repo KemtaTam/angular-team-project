@@ -1,10 +1,11 @@
 import { PreloaderComponent } from './components/preloader/preloader.component'
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './components/sidebar/sidebar.component'
 
 @NgModule({
-	declarations: [PreloaderComponent],
+	declarations: [PreloaderComponent, SidebarComponent],
 	imports: [CommonModule],
-	exports: [PreloaderComponent]
+	exports: [PreloaderComponent, SidebarComponent]
 })
 export class SharedModule {}
