@@ -1,7 +1,7 @@
+import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { TableComponent } from './components/table.component'
-import { TableRoutingModule } from './table.routing.module'
 import { MatIconModule } from '@angular/material/icon'
 import { TableChildComponent } from './components/table-child/table-child.component'
 import { MatTableModule } from '@angular/material/table'
@@ -15,13 +15,18 @@ import { ReactiveFormsModule } from '@angular/forms'
 	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent],
 	imports: [
 		CommonModule,
-		TableRoutingModule,
 		MatIconModule,
 		MatTableModule,
 		MatFormFieldModule,
 		MatInputModule,
 		MatDatepickerModule,
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		RouterModule.forChild([
+			{path: 'table', component: TableComponent}
+		]),
+	],
+	exports: [
+		TableComponent
 	]
 })
 export class TableModule {}

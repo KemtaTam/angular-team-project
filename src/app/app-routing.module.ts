@@ -3,14 +3,6 @@ import { RouterModule, Routes } from '@angular/router'
 import { TableModule } from './modules/table/table.module'
 
 const routes: Routes = [
-	{
-		path: 'table',
-		loadChildren: () => TableModule
-	},
-	{
-		path: '**',
-		loadChildren: () => TableModule
-	}
 ]
 
 @NgModule({
