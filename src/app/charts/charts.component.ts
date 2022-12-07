@@ -1,12 +1,13 @@
-import { ChartsDataService, IChartWithOptions } from './services/charts-data.service'
-import { ApiService } from './../services/api.service'
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Params } from '@angular/router'
-// todo: поменять формат даты
+
+import { ChartsDataService, IChartWithOptions } from './services/charts-data.service'
+import { ApiService } from '../shared/services/api.service'
+
 // todo: вынести сервис апи в shared
 
 export interface IParamsData {
-	type: string;
+	type: string
 	id: string
 }
 
@@ -30,7 +31,7 @@ export class ChartsComponent implements OnInit {
 		this.apiService.getData1().subscribe({
 			next: (res) => {
 				this.route.queryParams.subscribe((params: Params) => {
-					if(!Object.getOwnPropertyNames(params).length) {
+					if (!Object.getOwnPropertyNames(params).length) {
 						this.chartsDataService.setChartsData(res)
 						this.configuredData = this.chartsDataService.chartsWithOptions
 					} else {
@@ -50,7 +51,5 @@ export class ChartsComponent implements OnInit {
 				this.isLoading = false
 			}
 		})
-
-		
 	}
 }

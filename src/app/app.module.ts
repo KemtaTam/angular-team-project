@@ -1,14 +1,15 @@
-import { SharedModule } from './shared/shared.module'
-import { TableModule } from './table/table.module'
+import { MatNativeDateModule } from '@angular/material/core'
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule } from '@angular/common/http'
 
+import { SharedModule } from './shared/shared.module'
+import { TableModule } from './table/table.module'
 import { ChartsModule } from './charts/charts.module'
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
-import { MatNativeDateModule } from '@angular/material/core'
+
 @NgModule({
 	declarations: [AppComponent],
 	providers: [],

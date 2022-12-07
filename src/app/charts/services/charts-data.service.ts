@@ -1,8 +1,8 @@
-import { IParamsData } from './../charts.component'
 import { Injectable } from '@angular/core'
 import { ChartConfiguration } from 'chart.js'
 
-import { IData1 } from './../../services/api.service'
+import { IParamsData } from './../charts.component'
+import { IData1 } from '../../shared/services/api.service'
 
 export interface IChartWithOptions {
 	title: string
@@ -42,7 +42,7 @@ export class ChartsDataService {
 
 	constructor() {}
 
-	setChartsData(data: IData1[], paramsData?: IParamsData) {
+	setChartsData(data: IData1[], paramsData?: IParamsData): void {
 		this.chartsData = data
 		this.uniqueWhIds = [...this.getUniqueId(this.chartsData)]
 		if (paramsData) {
@@ -63,8 +63,8 @@ export class ChartsDataService {
 
 	private configureDate(dates: string[]): string[] {
 		const newDates = []
-		for(const date of dates) {
-			newDates.push(date.slice(8, 10) + "-" + date.slice(5, 7) + "-" + date.slice(0, 4))
+		for (const date of dates) {
+			newDates.push(date.slice(8, 10) + '-' + date.slice(5, 7) + '-' + date.slice(0, 4))
 		}
 		return newDates
 	}
@@ -85,7 +85,7 @@ export class ChartsDataService {
 			for (const el of chartElData) {
 				dates.push(el.dt_date)
 			}
-			dates = this.configureDate(dates);
+			dates = this.configureDate(dates)
 
 			//keys that will be displayed on the chart
 			let keys = Object.keys(chartElData[0]) //take the keys of any element
@@ -107,7 +107,7 @@ export class ChartsDataService {
 		return this.addOptionsToData(charts)
 	}
 
-	private configureDataToSum() {
+	private configureDataToSum(): IChartWithOptions[] {
 		let chartElData: IData1[] = []
 		const allDates = new Set<string>()
 		const resultArr: IChartEl[] = []

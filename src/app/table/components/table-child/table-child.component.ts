@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { finalize, Subscription } from 'rxjs'
-import { ApiService, IData0 } from '../../../services/api.service'
+import { ApiService, IData0 } from '../../../shared/services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 
 @Component({

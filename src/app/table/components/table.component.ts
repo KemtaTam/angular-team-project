@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core'
-import { ApiService, IData0 } from '../../services/api.service'
+import { ApiService, IData0 } from '../../shared/services/api.service'
 import { delay, finalize, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FormControl, FormGroup } from '@angular/forms'
