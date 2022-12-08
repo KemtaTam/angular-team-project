@@ -1,10 +1,16 @@
 import { Component, Input } from '@angular/core'
-import { finalize, map, Subscription } from 'rxjs'
-import { ApiService, IData0 } from '../../../shared/services/api.service'
+import { finalize, Subscription } from 'rxjs'
+import { ApiService } from '../../../shared/services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../../services/date.service'
 import { TableService } from '../../services/table.service'
+import { IObj } from '../../interfaces/office'
+import { FormControl, FormGroup } from '@angular/forms'
+
+interface Iqty {
+	qty: number[]
+}
 
 @Component({
 	selector: 'app-table-child',
@@ -22,13 +28,15 @@ export class TableChildComponent {
 	sub: Subscription[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	clickedRows = new Set<IData0>()
-	expandedElement: any
+	expandedElement?: string
 	isLoading = false
-	uniqueMap?: any
-	currentObj: any
-	@Input() builtInArr?: any
-	@Input() dateObj?: any
+	dataMap?: Map<string, Iqty>
+	currentObj?: IObj
+	@Input() warehousesMap?: any
+	@Input() dateObj?: FormGroup<{
+		start: FormControl<Date | null>
+		end: FormControl<Date | null>
+	}>
 	constructor(
 		private apiService: ApiService,
 		private router: Router,
@@ -39,15 +47,14 @@ export class TableChildComponent {
 		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
 	}
 
-	ngAfterViewInit(): void {}
-	onClickTwo(elem: any) {
+	getData(elem: IObj): void {
 		if (this.currentObj === elem) return
+		if (!this.dateObj) return
 		const dateStartStr = this.dateService.getFullDate(this.dateObj?.value.start)
 		const dateEndStr = this.dateService.getFullDate(this.dateObj?.value.end)
-		console.log(dateStartStr, dateEndStr)
 		this.currentObj = elem
 		this.isLoading = true
-		let mapWhId = new Map()
+		const mapWhId = new Map<string, Iqty>()
 		let data$
 		if (dateStartStr && dateEndStr) {
 			data$ = this.apiService.getDataWithParameter(
@@ -71,21 +78,21 @@ export class TableChildComponent {
 							qty: []
 						})
 						const currentDate = mapWhId.get(date)
+						if (!currentDate) return
 						currentDate.qty.push(item.qty)
 					})
 
-					this.uniqueMap = mapWhId
+					this.dataMap = mapWhId
 					return data
 				})
 		)
 	}
-	getChartWhId(key: any) {
-		console.log(key)
+	getChartWhId(key: number): void {
 		this.router.navigate(['/charts'], { queryParams: { wh_id: `${key}` } })
 	}
 	ngOnDestroy(): void {
-		for (let sub of this.sub) {
-			sub?.unsubscribe()
+		for (let subscriber of this.sub) {
+			subscriber.unsubscribe()
 		}
 	}
 }

@@ -41,7 +41,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		this.officeMap = new Map()
-
 		const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 		const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
 		let filterObj$
@@ -59,13 +58,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		if (this.currentObj !== elem) {
 			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 			const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
-			console.log(dateStart, dateEnd)
 			this.currentObj = elem
 			this.isLoading = true
 			let warehousesMap = new Map()
 			let warehouses$
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-				console.log(dateStart, dateEnd)
 				warehouses$ = this.apiService.getDataWithParameter(
 					`office_id=${elem.key}&dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`
 				)
@@ -85,14 +82,12 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 							if (!warehousesMap.has(item.wh_id)) {
 								warehousesMap.set(item.wh_id, {
 									wh_id: item.wh_id,
-									items: [],
 									totalQty: 0
 								})
 							}
 
 							const warehouses = warehousesMap.get(item.wh_id)
 							warehouses.totalQty += item.qty
-							warehouses.items.push(item)
 						})
 						this.warehousesMap = warehousesMap
 						return data
@@ -117,13 +112,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 						if (!this.officeMap.has(elem.office_id)) {
 							this.officeMap.set(elem.office_id, {
 								officeId: elem.office_id,
-								items: [],
 								totalQty: 0
 							})
 						}
 						let uniqueOffice = this.officeMap.get(elem.office_id)
 						uniqueOffice.totalQty += elem.qty
-						uniqueOffice.items.push(elem)
 					})
 					return item
 				})
@@ -131,8 +124,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		for (let sub of this.sub) {
-			sub?.unsubscribe()
+		for (let subscriber of this.sub) {
+			subscriber.unsubscribe()
 		}
 	}
 }

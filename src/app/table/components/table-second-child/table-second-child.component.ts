@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { TableService } from '../../services/table.service'
+import { Subscription } from 'rxjs'
 
 @Component({
 	selector: 'app-table-second-child',
@@ -14,17 +15,21 @@ import { TableService } from '../../services/table.service'
 		])
 	]
 })
-export class TableSecondChildComponent implements OnInit {
-	@Input() uniqueMap?: any
-
+export class TableSecondChildComponent {
+	@Input() dataMap?: any
+	sub: Subscription[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement: any
+	expandedElement?: string
 
 	constructor(private tableService: TableService) {
 		this.displayedColumns = this.tableService.displayedColumns
 		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
 	}
-	ngOnInit() {}
-	onClick(elem: any) {}
+
+	ngOnDestroy(): void {
+		for (let subscriber of this.sub) {
+			subscriber.unsubscribe()
+		}
+	}
 }
