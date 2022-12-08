@@ -1,5 +1,6 @@
+
 import { AfterViewInit, Component, Input, OnDestroy, ViewChild } from '@angular/core'
-import { ApiService, IData0 } from '../../services/api.service'
+import { ApiService, IData0 } from '../../shared/services/api.service'
 import { delay, finalize, Observable, Subscription } from 'rxjs'
 import { filter, map } from 'rxjs/operators'
 import { animate, state, style, transition, trigger } from '@angular/animations'

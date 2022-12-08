@@ -1,6 +1,7 @@
-import { IChartWithOptions } from './../services/charts-data.service';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core'
 import { Chart, ChartTypeRegistry, ScatterDataPoint, registerables } from 'chart.js'
+
+import { IChartWithOptions } from './../services/charts-data.service';
 
 @Component({
 	selector: 'app-chart-item',
