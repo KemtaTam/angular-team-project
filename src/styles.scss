@@ -1,3 +1,19 @@
+:root {
+  .mat-mdc-header-cell {
+    text-align: center;
+  }
+  .mdc-data-table__cell {
+    width: 120px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+  .mdc-data-table__row:last-child .mdc-data-table__cell {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+
+}
+
 /* ----------default------------ */
 html {
 	box-sizing: border-box;
@@ -52,5 +68,6 @@ a {
 	text-decoration: none;
 }
 /* ----------default------------ */
+
 
 

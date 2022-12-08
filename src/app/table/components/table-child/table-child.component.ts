@@ -4,6 +4,7 @@ import { ApiService, IData0 } from '../../../services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../../services/date.service'
+import { TableService } from '../../services/table.service'
 
 @Component({
 	selector: 'app-table-child',
@@ -19,7 +20,8 @@ import { DateService } from '../../services/date.service'
 })
 export class TableChildComponent {
 	sub: Subscription[] = []
-	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
+	displayedColumns: string[]
+	displayedColumnsWithArrow: string[]
 	clickedRows = new Set<IData0>()
 	expandedElement: any
 	isLoading = false
@@ -27,7 +29,15 @@ export class TableChildComponent {
 	currentObj: any
 	@Input() builtInArr?: any
 	@Input() dateObj?: any
-	constructor(private apiService: ApiService, private router: Router, private dateService: DateService) {}
+	constructor(
+		private apiService: ApiService,
+		private router: Router,
+		private dateService: DateService,
+		private tableService: TableService
+	) {
+		this.displayedColumns = this.tableService.displayedColumns
+		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
+	}
 
 	ngAfterViewInit(): void {}
 	onClickTwo(elem: any) {

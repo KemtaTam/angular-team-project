@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { animate, state, style, transition, trigger } from '@angular/animations'
+import { TableService } from '../../services/table.service'
 
 @Component({
 	selector: 'app-table-second-child',
@@ -16,8 +17,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 export class TableSecondChildComponent implements OnInit {
 	@Input() uniqueMap?: any
 
-	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
-	expandedElementTwo: any
+	displayedColumns: string[]
+	displayedColumnsWithArrow: string[]
+	expandedElement: any
+
+	constructor(private tableService: TableService) {
+		this.displayedColumns = this.tableService.displayedColumns
+		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
+	}
 	ngOnInit() {}
 	onClick(elem: any) {}
 }

@@ -7,8 +7,22 @@
 table {
   width: 600px;
 }
-
-
+.link-chart {
+  color: #3e4eb7;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+button {
+  background: transparent;
+  border: none;
+}
+.built-in {
+  padding: 0;
+  margin: 0;
+}
 tr.example-detail-row {
   height: 0;
 }
