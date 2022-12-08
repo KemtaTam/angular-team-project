@@ -46,7 +46,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		let filterObj$
 
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-			console.log(dateStart, dateEnd)
 			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
 		} else {
 			filterObj$ = this.apiService.getData0()

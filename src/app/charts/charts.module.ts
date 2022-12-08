@@ -1,8 +1,8 @@
-import { ChartItemComponent } from './chart-item/chart-item.component'
 import { RouterModule } from '@angular/router'
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
+import { ChartItemComponent } from './chart-item/chart-item.component'
 import { ChartsComponent } from './charts.component'
 import { SharedModule } from './../shared/shared.module'
 

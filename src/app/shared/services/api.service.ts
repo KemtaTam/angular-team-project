@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { catchError, delay, throwError } from 'rxjs'
+import { catchError, delay, Observable, throwError } from 'rxjs'
 
 export interface IData0 {
 	office_id: number
@@ -21,7 +21,7 @@ export class ApiService {
 
 	constructor(private http: HttpClient) {}
 
-	getData0() {
+	getData0(): Observable<IData0[]> {
 		return this.http.get<IData0[]>(`${this.baseURL}/data0`).pipe(
 			catchError((error) => {
 				console.log('Error: ', error.message)
@@ -30,7 +30,7 @@ export class ApiService {
 		)
 	}
 
-	getData1() {
+	getData1(): Observable<IData1[]> {
 		return this.http.get<IData1[]>(`${this.baseURL}/data1`).pipe(
 			catchError((error) => {
 				console.log('Error: ', error.message)
@@ -39,7 +39,7 @@ export class ApiService {
 		)
 	}
 
-	getDataWithParameter(parametrs: string) {
+	getDataWithParameter(parametrs: string): Observable<IData1[]> {
 		return this.http.get<IData1[]>(`${this.baseURL}/data1?${parametrs}`).pipe(
 			delay(100),
 			catchError((error) => {
