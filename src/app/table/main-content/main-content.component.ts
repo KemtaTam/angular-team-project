@@ -49,7 +49,7 @@ export class MainContentComponent {
 		this.makeSub(filterObj$)
 	}
 
-	makeSub(observable: Observable<any>): void {
+	makeSub(observable: Observable<IData0[]>): void {
 		this.sub.push(
 			observable
 				.pipe(

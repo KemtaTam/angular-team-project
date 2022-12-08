@@ -104,7 +104,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
 
-	makeSub(observable: Observable<any>): void {
+	makeSub(observable: Observable<IData0[]>): void {
 		this.sub.push(
 			observable
 				.pipe(
