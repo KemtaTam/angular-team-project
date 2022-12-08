@@ -31,7 +31,7 @@ import { MainContentComponent } from './main-content/main-content.component'
 		ReactiveFormsModule,
 		RouterModule.forChild([{ path: 'main-content', component: MainContentComponent }])
 	],
-	exports: [TableComponent],
+	exports: [TableComponent, TableSecondChildComponent],
 	providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }]
 })
 export class TableModule {}
