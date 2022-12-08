@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { DateService } from '../services/date.service'
 import { ApiService } from '../../services/api.service'
 import { finalize, Observable, Subscription } from 'rxjs'
+import { TableService } from '../services/table.service'
 
 @Component({
 	selector: 'app-main-content',

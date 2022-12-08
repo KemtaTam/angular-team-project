@@ -8,6 +8,8 @@ import { MatSort } from '@angular/material/sort'
 import { MatTableDataSource } from '@angular/material/table'
 import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
+import { TableService } from '../services/table.service'
+
 @Component({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
@@ -23,21 +25,26 @@ import { DateService } from '../services/date.service'
 export class TableComponent implements AfterViewInit, OnDestroy {
 	sub: Subscription[] = []
 	data0: IData0[] = []
-	// mapUniqueOffice: any = new Map()
-	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
+	displayedColumns: string[]
+	displayedColumnsWithArrow: string[]
 	expandedElement: any
 	currentObj?: IData0 | null
-	builtInArr: any = []
 	isLoading = false
 	warehousesMap: any
 	@Input() dateObj?: any
 	@Input() officeMap?: any
-	isFilter = false
-	constructor(private apiService: ApiService, private router: Router, private dateService: DateService) {}
+	constructor(
+		private apiService: ApiService,
+		private router: Router,
+		private dateService: DateService,
+		private tableService: TableService
+	) {
+		this.displayedColumns = this.tableService.displayedColumns
+		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
+	}
 
 	ngAfterViewInit(): void {
 		this.officeMap = new Map()
-		this.isFilter = true
 
 		const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 		const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd

@@ -19,13 +19,10 @@ import { DateService } from '../../services/date.service'
 })
 export class TableChildComponent {
 	sub: Subscription[] = []
-
 	displayedColumns: string[] = ['office_id', 'wh_id', 'dt_date', 'qty']
 	clickedRows = new Set<IData0>()
 	expandedElement: any
-	expandedElementTwo: any
 	isLoading = false
-	dataArrTwo: any = []
 	uniqueMap?: any
 	currentObj: any
 	@Input() builtInArr?: any
