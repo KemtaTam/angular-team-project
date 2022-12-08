@@ -26,7 +26,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	data0: IData0[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement: any
+	expandedElement?: string
 	currentObj?: IObj
 	isLoading = false
 	warehousesMap?: Map<number, Iwarehouse>
