@@ -3,8 +3,14 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { DateService } from '../services/date.service'
 import { ApiService } from '../../shared/services/api.service'
 import { finalize, Observable, Subscription } from 'rxjs'
-import { TableService } from '../services/table.service'
-
+interface Office {
+	officeId: number
+	totalQty: number
+}
+interface MinMax {
+	today: Date
+	sixMonthAgo: Date
+}
 @Component({
 	selector: 'app-main-content',
 	templateUrl: './main-content.component.html',
@@ -13,7 +19,7 @@ import { TableService } from '../services/table.service'
 export class MainContentComponent {
 	minDate = this.getMinMax().sixMonthAgo
 	maxDate = this.getMinMax().today
-	mapUniqueOffice: any = new Map()
+	mapUniqueOffice = new Map<number, Office>()
 	range = new FormGroup({
 		start: new FormControl<Date | null>(null),
 		end: new FormControl<Date | null>(null)
@@ -22,18 +28,17 @@ export class MainContentComponent {
 	isLoading = false
 
 	constructor(private apiService: ApiService, private dateService: DateService) {}
-	getMinMax() {
+	getMinMax(): MinMax {
 		const today = new Date()
 		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 6))
-		console.log(today, sixMonthAgo)
 		return {
 			today,
 			sixMonthAgo
 		}
 	}
 
-	getData() {
-		this.mapUniqueOffice = new Map()
+	getData(): void {
+		this.mapUniqueOffice = new Map<number, Office>()
 		const dateStart = this.dateService.getDate(this.range.value.start, this.range.value.end)?.dateStart
 		const dateEnd = this.dateService.getDate(this.range.value.start, this.range.value.end)?.dateEnd
 		let filterObj$
@@ -42,10 +47,11 @@ export class MainContentComponent {
 		} else {
 			filterObj$ = this.apiService.getData1()
 		}
+		console.log('TERTRRE')
 		this.makeSub(filterObj$)
 	}
 
-	makeSub(observable: Observable<any>) {
+	makeSub(observable: Observable<any>): void {
 		this.sub.push(
 			observable
 				.pipe(
@@ -53,21 +59,26 @@ export class MainContentComponent {
 						this.isLoading = false
 					})
 				)
-				.subscribe((item: any) => {
+				.subscribe((item) => {
 					item.forEach((elem: any) => {
 						if (!this.mapUniqueOffice.has(elem.office_id)) {
 							this.mapUniqueOffice.set(elem.office_id, {
 								officeId: elem.office_id,
-								items: [],
 								totalQty: 0
 							})
 						}
+						console.log(elem)
 						let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
+						if (!uniqueOffice) return
 						uniqueOffice.totalQty += elem.qty
-						uniqueOffice.items.push(elem)
 					})
 					return item
 				})
 		)
+	}
+	ngOnDestroy(): void {
+		for (let sub of this.sub) {
+			sub?.unsubscribe()
+		}
 	}
 }
