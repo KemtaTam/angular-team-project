@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core'
 export class DateService {
 	constructor() {}
 
-	getFullDate(date: Date, local?: 'RU'): string {
+	getFullDate(date: Date | null | undefined, local?: 'RU'): string {
 		if (!date) return ''
 		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
 		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1

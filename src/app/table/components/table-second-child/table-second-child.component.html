@@ -1,4 +1,4 @@
-  <table mat-table multiTemplateDataRows [dataSource]="uniqueMap | keyvalue" class="mat-elevation-z8">
+  <table mat-table multiTemplateDataRows [dataSource]="dataMap | keyvalue" class="mat-elevation-z8">
 
     <ng-container matColumnDef="office_id" >
       <th mat-header-cell *matHeaderCellDef>Офис</th>
@@ -35,6 +35,5 @@
     <tr mat-header-row></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumnsWithArrow"
         [class.example-expanded-row]="displayedColumnsWithArrow === row"></tr>
-
   </table>
 

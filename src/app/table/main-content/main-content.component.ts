@@ -3,10 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { DateService } from '../services/date.service'
 import { ApiService, IData0 } from '../../shared/services/api.service'
 import { finalize, Observable, Subscription } from 'rxjs'
-interface IOffice {
-	officeId: number
-	totalQty: number
-}
+import { IOffice } from '../interfaces/office'
+
 interface IMinMax {
 	today: Date
 	sixMonthAgo: Date
@@ -18,6 +16,7 @@ interface IMinMax {
 	styleUrls: ['./main-content.component.scss']
 })
 export class MainContentComponent {
+	sub: Subscription[] = []
 	minDate = this.getMinMax().sixMonthAgo
 	maxDate = this.getMinMax().today
 	mapUniqueOffice = new Map<number, IOffice>()
@@ -25,7 +24,6 @@ export class MainContentComponent {
 		start: new FormControl<Date | null>(null),
 		end: new FormControl<Date | null>(null)
 	})
-	sub: Subscription[] = []
 	isLoading = false
 
 	constructor(private apiService: ApiService, private dateService: DateService) {}
@@ -76,8 +74,8 @@ export class MainContentComponent {
 		)
 	}
 	ngOnDestroy(): void {
-		for (let sub of this.sub) {
-			sub?.unsubscribe()
+		for (let subscriber of this.sub) {
+			subscriber.unsubscribe()
 		}
 	}
 }
