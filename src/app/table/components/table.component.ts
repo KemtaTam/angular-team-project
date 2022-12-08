@@ -5,6 +5,9 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
 import { TableService } from '../services/table.service'
+import { IObj, IOffice, Iwarehouse } from '../interfaces/office'
+import { CdkTableDataSourceInput } from '@angular/cdk/table'
+import { FormControl, FormGroup } from '@angular/forms'
 
 @Component({
 	selector: 'app-table',
@@ -24,11 +27,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
 	expandedElement: any
-	currentObj?: IData0 | null
+	currentObj?: IObj
 	isLoading = false
-	warehousesMap: any
-	@Input() dateObj?: any
-	@Input() officeMap?: any
+	warehousesMap?: Map<number, Iwarehouse>
+	@Input() dateObj?: FormGroup<{ start: FormControl<Date | null>; end: FormControl<Date | null> }>
+	@Input() officeMap!: any
 	constructor(
 		private apiService: ApiService,
 		private router: Router,
@@ -40,7 +43,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.officeMap = new Map()
+		this.officeMap = new Map<number, IOffice>()
+		if (!this.dateObj) return
 		const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 		const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
 		let filterObj$
@@ -53,13 +57,14 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		this.makeSub(filterObj$)
 	}
 
-	getData(elem: any) {
+	getData(elem: IObj): void {
 		if (this.currentObj !== elem) {
+			if (!this.dateObj) return
 			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 			const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
 			this.currentObj = elem
 			this.isLoading = true
-			let warehousesMap = new Map()
+			let warehousesMap = new Map<number, Iwarehouse>()
 			let warehouses$
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 				warehouses$ = this.apiService.getDataWithParameter(
@@ -76,8 +81,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 							this.isLoading = false
 						})
 					)
-					.subscribe((data: any) => {
-						data.forEach((item: any) => {
+					.subscribe((data) => {
+						data.forEach((item) => {
 							if (!warehousesMap.has(item.wh_id)) {
 								warehousesMap.set(item.wh_id, {
 									wh_id: item.wh_id,
@@ -86,6 +91,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 							}
 
 							const warehouses = warehousesMap.get(item.wh_id)
+							if (!warehouses) return
 							warehouses.totalQty += item.qty
 						})
 						this.warehousesMap = warehousesMap
@@ -94,11 +100,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			)
 		}
 	}
-	getChartOffice(key: any) {
+	getChartOffice(key: number): void {
 		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
 
-	makeSub(observable: Observable<any>) {
+	makeSub(observable: Observable<any>): void {
 		this.sub.push(
 			observable
 				.pipe(
@@ -106,11 +112,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 						this.isLoading = false
 					})
 				)
-				.subscribe((item: any) => {
-					item.forEach((elem: any) => {
+				.subscribe((item: IData0[]) => {
+					item.forEach((elem) => {
 						if (!this.officeMap.has(elem.office_id)) {
 							this.officeMap.set(elem.office_id, {
-								officeId: elem.office_id,
+								office_id: elem.office_id,
 								totalQty: 0
 							})
 						}

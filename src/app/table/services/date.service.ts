@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core'
 
+interface IDatePicker {
+	dateStart: string
+	dateEnd: string
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -16,12 +21,12 @@ export class DateService {
 		return local ? `${day + '/' + month + '/' + year}` : `${year + '-' + month + '-' + day}`
 	}
 
-	isCorrectFilterDate(dateStart: Date | string | undefined, dateEnd: Date | string | undefined) {
+	isCorrectFilterDate(dateStart: Date | string | undefined, dateEnd: Date | string | undefined): boolean {
 		if (!(dateStart && dateEnd)) return false
 		return true
 	}
 
-	getDate(dateStart: Date | undefined | null, dateEnd: Date | undefined | null) {
+	getDate(dateStart: Date | undefined | null, dateEnd: Date | undefined | null): IDatePicker | undefined {
 		const startDate = dateStart
 		const endDate = dateEnd
 		if (!(startDate && endDate)) return

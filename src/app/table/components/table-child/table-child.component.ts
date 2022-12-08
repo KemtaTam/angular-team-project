@@ -88,7 +88,7 @@ export class TableChildComponent {
 		)
 	}
 	getChartWhId(key: number): void {
-		this.router.navigate(['/charts'], { queryParams: { wh_id: `${key}` } })
+		this.router?.navigate(['/charts'], { queryParams: { wh_id: `${key}` } })
 	}
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {

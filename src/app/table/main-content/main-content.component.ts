@@ -61,7 +61,7 @@ export class MainContentComponent {
 					item.forEach((elem: IData0) => {
 						if (!this.mapUniqueOffice.has(elem.office_id)) {
 							this.mapUniqueOffice.set(elem.office_id, {
-								officeId: elem.office_id,
+								office_id: elem.office_id,
 								totalQty: 0
 							})
 						}

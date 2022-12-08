@@ -1,5 +1,5 @@
 export interface IOffice {
-	officeId: number
+	office_id: number
 	totalQty: number
 }
 export interface Iwarehouse {
