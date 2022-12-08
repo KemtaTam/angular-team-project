@@ -1,12 +1,7 @@
-
 import { AfterViewInit, Component, Input, OnDestroy, ViewChild } from '@angular/core'
 import { ApiService, IData0 } from '../../shared/services/api.service'
-import { delay, finalize, Observable, Subscription } from 'rxjs'
-import { filter, map } from 'rxjs/operators'
+import { finalize, Observable, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
-import { MatSort } from '@angular/material/sort'
-import { MatTableDataSource } from '@angular/material/table'
 import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
 import { TableService } from '../services/table.service'
@@ -60,7 +55,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		this.makeSub(filterObj$)
 	}
 
-	onClick(elem: any) {
+	getData(elem: any) {
 		if (this.currentObj !== elem) {
 			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
 			const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
