@@ -28,7 +28,7 @@ export class TableChildComponent {
 	sub: Subscription[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement?: string
+	expandedElement?: IObj | null
 	isLoading = false
 	dataMap?: Map<string, Iqty>
 	currentObj?: IObj
@@ -48,6 +48,7 @@ export class TableChildComponent {
 	}
 
 	getData(elem: IObj): void {
+		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj === elem) return
 		if (!this.dateObj) return
 		const dateStartStr = this.dateService.getFullDate(this.dateObj?.value.start)

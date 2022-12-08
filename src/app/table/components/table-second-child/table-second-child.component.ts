@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { TableService } from '../../services/table.service'
 import { Subscription } from 'rxjs'
+import { IObj } from '../../interfaces/office'
 
 @Component({
 	selector: 'app-table-second-child',
@@ -20,7 +21,7 @@ export class TableSecondChildComponent {
 	sub: Subscription[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement?: string
+	expandedElement?: IObj | null
 
 	constructor(private tableService: TableService) {
 		this.displayedColumns = this.tableService.displayedColumns

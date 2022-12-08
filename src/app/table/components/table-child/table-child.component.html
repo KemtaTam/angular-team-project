@@ -53,7 +53,7 @@
     <tr mat-header-row></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumnsWithArrow"
         [class.example-expanded-row]="displayedColumnsWithArrow === row"
-        (click)="expandedElement = expandedElement === row ? null : row" (click)="getData(row)"></tr>
+        (click)="getData(row)"></tr>
     <tr mat-row  *matRowDef="let row; columns: ['expandedDetailTwo']"  class="example-detail-row"></tr>
   </table>
 </div>

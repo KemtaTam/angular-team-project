@@ -26,11 +26,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	data0: IData0[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement?: string
+	expandedElement?: IObj | null
 	currentObj?: IObj
 	isLoading = false
 	warehousesMap?: Map<number, Iwarehouse>
-	
+
 	@Input() dateObj?: FormGroup<{ start: FormControl<Date | null>; end: FormControl<Date | null> }>
 	@Input() officeMap!: Map<number, IOffice>
 
@@ -60,6 +60,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 
 	getData(elem: IObj): void {
+		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj !== elem) {
 			if (!this.dateObj) return
 			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
