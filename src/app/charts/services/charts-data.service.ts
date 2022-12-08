@@ -23,8 +23,10 @@ export interface IChartEl {
 interface ILegendTitle {
 	qty: string
 }
-
-type ChartType = 'general' | 'office' | 'wh'
+interface ITitleType {
+	office_id: string
+	wh_id: string
+}
 
 @Injectable({
 	providedIn: 'root'
@@ -34,6 +36,10 @@ export class ChartsDataService {
 	private uniqueWhIds: number[] = []
 	private legendTitle: ILegendTitle = {
 		qty: 'Количество'
+	}
+	private titleType: ITitleType = {
+		office_id: 'Офис',
+		wh_id: 'Склад'
 	}
 	private paramsData?: IParamsData
 
@@ -134,7 +140,7 @@ export class ChartsDataService {
 
 		//add configured data to resulting chart
 		resultArr.push({
-			title: `${this.paramsData?.type} № ${this.paramsData?.id}`, //todo
+			title: `${this.titleType[this.paramsData!.type as keyof ITitleType]} № ${this.paramsData?.id}`,
 			dates: this.configureDate([...allDates]),
 			additionalData
 		})
@@ -182,7 +188,7 @@ export class ChartsDataService {
 			}
 
 			additionalData.push({
-				label: key,
+				label: this.legendTitle[key as keyof ILegendTitle],
 				data: arrWithValuesOfThisKey,
 				tension: 0.5,
 				backgroundColor: 'blue',
