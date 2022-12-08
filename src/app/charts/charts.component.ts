@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Params } from '@angular/router'
 
 import { ChartsDataService, IChartWithOptions } from './services/charts-data.service'
 import { ApiService } from '../shared/services/api.service'
-
-// todo: вынести сервис апи в shared
 
 export interface IParamsData {
 	type: string
@@ -16,10 +15,11 @@ export interface IParamsData {
 	templateUrl: './charts.component.html',
 	styleUrls: ['./charts.component.scss']
 })
-export class ChartsComponent implements OnInit {
+export class ChartsComponent implements OnInit, OnDestroy {
 	error = ''
 	isLoading = true
 	configuredData: IChartWithOptions[] = []
+	subscription!: Subscription
 
 	constructor(
 		private apiService: ApiService,
@@ -28,7 +28,7 @@ export class ChartsComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.apiService.getData1().subscribe({
+		this.subscription = this.apiService.getData1().subscribe({
 			next: (res) => {
 				this.route.queryParams.subscribe((params: Params) => {
 					if (!Object.getOwnPropertyNames(params).length) {
@@ -51,5 +51,9 @@ export class ChartsComponent implements OnInit {
 				this.isLoading = false
 			}
 		})
+	}
+
+	ngOnDestroy(): void {
+		this.subscription.unsubscribe()
 	}
 }
