@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Params } from '@angular/router'
 
@@ -19,7 +19,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	error = ''
 	isLoading = true
 	configuredData: IChartWithOptions[] = []
-	subscription!: Subscription
+	subscriptionData!: Subscription
+	subscriptionRoute!: Subscription
 
 	constructor(
 		private apiService: ApiService,
@@ -28,11 +29,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
-		this.subscription = this.apiService.getData1().subscribe({
+		this.subscriptionData = this.apiService.getData1().subscribe({
 			next: (res) => {
-				this.route.queryParams.subscribe((params: Params) => {
+				this.subscriptionRoute = this.route.queryParams.subscribe((params: Params) => {
 					if (!Object.getOwnPropertyNames(params).length) {
-						this.chartsDataService.setChartsData(res)
+						if (!this.chartsDataService.chartsWithOptions.length) {
+							this.chartsDataService.setChartsData(res)
+						}
 						this.configuredData = this.chartsDataService.chartsWithOptions
 					} else {
 						const paramsData: IParamsData = {
@@ -54,6 +57,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		this.subscription.unsubscribe()
+		this.subscriptionData.unsubscribe()
+		this.subscriptionRoute.unsubscribe()
 	}
 }
