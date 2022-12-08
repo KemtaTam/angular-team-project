@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core'
 import { ApiService, IData0 } from '../../shared/services/api.service'
 import { finalize, Observable, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
