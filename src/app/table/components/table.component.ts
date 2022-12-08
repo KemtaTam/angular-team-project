@@ -55,7 +55,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			console.log(dateStart, dateEnd)
 			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
 		} else {
-			filterObj$ = this.apiService.getData1()
+			filterObj$ = this.apiService.getData0()
 		}
 		this.makeSub(filterObj$)
 	}

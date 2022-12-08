@@ -23,7 +23,7 @@ export class ApiService {
 
 	getData0() {
 		return this.http.get<IData0[]>(`${this.baseURL}/data0`).pipe(
-			delay(100),
+			/* delay(1000), */
 			catchError((error) => {
 				console.log('Error: ', error.message)
 				return throwError(() => error)
@@ -33,7 +33,7 @@ export class ApiService {
 
 	getData1() {
 		return this.http.get<IData1[]>(`${this.baseURL}/data1`).pipe(
-			delay(100),
+			/* delay(1000), */
 			catchError((error) => {
 				console.log('Error: ', error.message)
 				return throwError(() => error)
