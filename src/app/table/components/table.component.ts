@@ -30,8 +30,10 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	currentObj?: IObj
 	isLoading = false
 	warehousesMap?: Map<number, Iwarehouse>
+	
 	@Input() dateObj?: FormGroup<{ start: FormControl<Date | null>; end: FormControl<Date | null> }>
-	@Input() officeMap!: any
+	@Input() officeMap!: Map<number, IOffice>
+
 	constructor(
 		private apiService: ApiService,
 		private router: Router,
@@ -121,7 +123,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 							})
 						}
 						let uniqueOffice = this.officeMap.get(elem.office_id)
-						uniqueOffice.totalQty += elem.qty
+						uniqueOffice!.totalQty += elem.qty
 					})
 					return item
 				})
