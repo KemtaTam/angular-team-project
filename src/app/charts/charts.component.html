@@ -1,8 +1,10 @@
 <div class="charts">
-	<app-preloader *ngIf="isLoading; else content"></app-preloader>
-	<ng-template #content>
+	<div class="data-wrap" *ngIf="!isLoading; else content">
 		<div *ngFor="let item of configuredData">
-			<app-chart-item [chartItem]="item"></app-chart-item>
-		</div>
+			<app-chart-item [chartItem]="item"></app-chart-item></div
+	></div>
+
+	<ng-template #content>
+		<app-preloader *ngIf="isLoading; else content"></app-preloader>
 	</ng-template>
 </div>
