@@ -18,7 +18,7 @@ export class DateService {
 	}
 	constructor() {}
 
-	setCurrentDate(dateStart?: Date | null, dateEnd?: Date | null) {
+	setCurrentDate(dateStart?: Date | null, dateEnd?: Date | null): void {
 		this.currentDate = {
 			dateStart,
 			dateEnd
