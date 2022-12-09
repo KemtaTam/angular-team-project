@@ -1,4 +1,4 @@
-import { TableRoutingModule } from './table-routing.module';
+import { TableRoutingModule } from './table-routing.module'
 
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
@@ -13,15 +13,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import { PreloaderComponent } from './components/preloader/preloader.component'
-import { MainContentComponent } from './main-content/main-content.component'
 @NgModule({
-	declarations: [
-		TableComponent,
-		TableChildComponent,
-		TableSecondChildComponent,
-		PreloaderComponent,
-		MainContentComponent
-	],
+	declarations: [TableComponent, TableChildComponent, TableSecondChildComponent, PreloaderComponent],
 	imports: [
 		CommonModule,
 		MatIconModule,

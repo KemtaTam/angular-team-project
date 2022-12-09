@@ -6,6 +6,7 @@ import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
 import { TableService } from '../services/table.service'
 import { IOffice, Iwarehouse } from '../interfaces/interfaces'
+import { FormControl, FormGroup } from '@angular/forms'
 
 @Component({
 	selector: 'app-table',
@@ -28,7 +29,14 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	currentObj?: IOffice
 	isLoading = false
 	warehousesArr: Iwarehouse[] = []
-	@Input() uniqueOfficeArr: IOffice[] = []
+	range = new FormGroup({
+		start: new FormControl<Date | null>(null),
+		end: new FormControl<Date | null>(null)
+	})
+	minDate = this.getMinMax().sixMonthAgo
+	maxDate = this.getMinMax().today
+	uniqueOfficeArr: IOffice[] = []
+	// @Input() uniqueOfficeArr: IOffice[] = []
 
 	constructor(
 		private apiService: ApiService,
@@ -41,45 +49,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		const dateStart = this.dateService.getDate()?.dateStart
-		const dateEnd = this.dateService.getDate()?.dateEnd
-		const uniqueMap = new Map<number, IOffice>()
-		let filterObj$
-		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-			if (dateStart && dateEnd)
-				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
-		} else {
-			filterObj$ = this.apiService.getData0()
-		}
-		if (!filterObj$) return
-
-		this.sub.push(
-			filterObj$
-				.pipe(
-					finalize(() => {
-						this.isLoading = false
-					}),
-					map((dataArr) => {
-						dataArr.forEach((data) => {
-							if (!uniqueMap.has(data.office_id)) {
-								uniqueMap.set(data.office_id, {
-									office_id: data.office_id,
-									totalQty: 0
-								})
-							}
-							const warehouses = uniqueMap.get(data.office_id)
-							if (!warehouses) return
-							warehouses.totalQty += data.qty
-						})
-					})
-				)
-				.subscribe((item) => {
-					this.uniqueOfficeArr = [...uniqueMap.values()]
-					return item
-				})
-		)
+		this.getFilteredData()
 	}
-
 	getData(elem: IOffice): void {
 		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj !== elem) {
@@ -126,12 +97,59 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			)
 		}
 	}
+	getMinMax(): { today: Date; sixMonthAgo: Date } {
+		const today = new Date()
+		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 6))
+		return {
+			today,
+			sixMonthAgo
+		}
+	}
+
 	getChartOffice(key: number): void {
 		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
+	getFilteredData() {
+		this.dateService.setCurrentDate(this.range.value.start, this.range.value.end)
+		const dateStart = this.dateService.getDate()?.dateStart
+		const dateEnd = this.dateService.getDate()?.dateEnd
+		const uniqueMap = new Map<number, IOffice>()
+		let filterObj$
+		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
+			if (dateStart && dateEnd)
+				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
+		} else {
+			filterObj$ = this.apiService.getData0()
+		}
+		if (!filterObj$) return
 
+		this.sub.push(
+			filterObj$
+				.pipe(
+					finalize(() => {
+						this.isLoading = false
+					}),
+					map((dataArr) => {
+						dataArr.forEach((data) => {
+							if (!uniqueMap.has(data.office_id)) {
+								uniqueMap.set(data.office_id, {
+									office_id: data.office_id,
+									totalQty: 0
+								})
+							}
+							const warehouses = uniqueMap.get(data.office_id)
+							if (!warehouses) return
+							warehouses.totalQty += data.qty
+						})
+					})
+				)
+				.subscribe((item) => {
+					this.uniqueOfficeArr = [...uniqueMap.values()]
+					return item
+				})
+		)
+	}
 	// makeSub(observable: Observable<IData0[]>): void {}
-
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {
 			subscriber.unsubscribe()

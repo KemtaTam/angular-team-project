@@ -1,3 +1,18 @@
+<div class="main-content">
+  <div class="datapicker">
+    <mat-form-field class="datapicker__content" appearance="fill">
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [formGroup]="range" [min]="minDate" [max]="maxDate" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Start date">
+        <input matEndDate formControlName="end" placeholder="End date">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+    <button class="datapicker__btn" (click)="getFilteredData()">Обновить</button>
+  </div>
+
+</div>
 <div class="table mat-elevation-z8">
     <table mat-table multiTemplateDataRows [dataSource]="uniqueOfficeArr" class="mat-elevation-z8">
 
