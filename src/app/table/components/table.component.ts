@@ -1,12 +1,11 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core'
 import { ApiService, IData0 } from '../../shared/services/api.service'
-import { finalize, Observable, Subscription } from 'rxjs'
+import { finalize, map, Observable, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
 import { TableService } from '../services/table.service'
-import { IObj, IOffice, Iwarehouse } from '../interfaces/office'
-import { FormControl, FormGroup } from '@angular/forms'
+import { IOffice, Iwarehouse } from '../interfaces/interfaces'
 
 @Component({
 	selector: 'app-table',
@@ -25,13 +24,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	data0: IData0[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement?: IObj | null
-	currentObj?: IObj
+	expandedElement?: IOffice | null
+	currentObj?: IOffice
 	isLoading = false
-	warehousesMap?: Map<number, Iwarehouse>
-
-	@Input() dateObj?: FormGroup<{ start: FormControl<Date | null>; end: FormControl<Date | null> }>
-	@Input() officeMap!: Map<number, IOffice>
+	warehousesArr: Iwarehouse[] = []
+	@Input() uniqueOfficeArr: IOffice[] = []
 
 	constructor(
 		private apiService: ApiService,
@@ -44,9 +41,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.officeMap = new Map<number, IOffice>()
 		const dateStart = this.dateService.getDate()?.dateStart
 		const dateEnd = this.dateService.getDate()?.dateEnd
+		const uniqueOfficeMap = new Map<number, IOffice>()
 		let filterObj$
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			if (dateStart && dateEnd)
@@ -54,10 +51,36 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		} else {
 			filterObj$ = this.apiService.getData0()
 		}
-		if (filterObj$) this.makeSub(filterObj$)
+		if (!filterObj$) return
+
+		this.sub.push(
+			filterObj$
+				.pipe(
+					finalize(() => {
+						this.isLoading = false
+					}),
+					map((dataArr) => {
+						dataArr.forEach((data) => {
+							if (!uniqueOfficeMap.has(data.office_id)) {
+								uniqueOfficeMap.set(data.office_id, {
+									office_id: data.office_id,
+									totalQty: 0
+								})
+							}
+							const warehouses = uniqueOfficeMap.get(data.office_id)
+							if (!warehouses) return
+							warehouses.totalQty += data.qty
+						})
+					})
+				)
+				.subscribe((item) => {
+					this.uniqueOfficeArr = [...uniqueOfficeMap.values()]
+					return item
+				})
+		)
 	}
 
-	getData(elem: IObj): void {
+	getData(elem: IOffice): void {
 		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj !== elem) {
 			const dateStart = this.dateService.getDate()?.dateStart
@@ -68,12 +91,12 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			let warehouses$
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 				warehouses$ = this.apiService.getDataWithParameter({
-					office_id: elem.key.toString(),
+					office_id: elem.office_id.toString(),
 					dt_date_gte: dateStart + '',
 					dt_date_lte: dateEnd + ''
 				})
 			} else {
-				warehouses$ = this.apiService.getDataWithParameter({ office_id: elem.key.toString() })
+				warehouses$ = this.apiService.getDataWithParameter({ office_id: elem.office_id.toString() })
 			}
 
 			this.sub.push(
@@ -81,22 +104,23 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 					.pipe(
 						finalize(() => {
 							this.isLoading = false
+						}),
+						map((dataArr) => {
+							dataArr.forEach((data) => {
+								if (!warehousesMap.has(data.wh_id)) {
+									warehousesMap.set(data.wh_id, {
+										wh_id: data.wh_id,
+										totalQty: 0
+									})
+								}
+								const warehouses = warehousesMap.get(data.wh_id)
+								if (!warehouses) return
+								warehouses.totalQty += data.qty
+							})
 						})
 					)
 					.subscribe((data) => {
-						data.forEach((item) => {
-							if (!warehousesMap.has(item.wh_id)) {
-								warehousesMap.set(item.wh_id, {
-									wh_id: item.wh_id,
-									totalQty: 0
-								})
-							}
-
-							const warehouses = warehousesMap.get(item.wh_id)
-							if (!warehouses) return
-							warehouses.totalQty += item.qty
-						})
-						this.warehousesMap = warehousesMap
+						this.warehousesArr = [...warehousesMap.values()]
 						return data
 					})
 			)
@@ -106,29 +130,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		this.router.navigate(['/charts'], { queryParams: { office_id: `${key}` } })
 	}
 
-	makeSub(observable: Observable<IData0[]>): void {
-		this.sub.push(
-			observable
-				.pipe(
-					finalize(() => {
-						this.isLoading = false
-					})
-				)
-				.subscribe((item: IData0[]) => {
-					item.forEach((elem) => {
-						if (!this.officeMap.has(elem.office_id)) {
-							this.officeMap.set(elem.office_id, {
-								office_id: elem.office_id,
-								totalQty: 0
-							})
-						}
-						let uniqueOffice = this.officeMap.get(elem.office_id)
-						uniqueOffice!.totalQty += elem.qty
-					})
-					return item
-				})
-		)
-	}
+	// makeSub(observable: Observable<IData0[]>): void {}
 
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {

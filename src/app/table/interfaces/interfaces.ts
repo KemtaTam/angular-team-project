@@ -6,7 +6,7 @@ export interface Iwarehouse {
 	wh_id: number
 	totalQty: number
 }
-export interface IObj {
-	key: number
-	value: Iwarehouse
+export interface Data {
+	dt_date: string
+	qty: number
 }
