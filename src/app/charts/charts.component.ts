@@ -1,4 +1,5 @@
-import { Subscription } from 'rxjs'
+import { IData1 } from './../shared/services/api.service';
+import { Subscription, switchMap } from 'rxjs'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Params } from '@angular/router'
 
@@ -22,6 +23,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	subscriptionData!: Subscription
 	subscriptionRoute!: Subscription
 
+	data!: IData1[]
+
 	constructor(
 		private apiService: ApiService,
 		private chartsDataService: ChartsDataService,
@@ -29,35 +32,35 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
-		this.subscriptionData = this.apiService.getData1().subscribe({
-			next: (res) => {
-				this.subscriptionRoute = this.route.queryParams.subscribe((params: Params) => {
-					if (!Object.getOwnPropertyNames(params).length) {
-						if (!this.chartsDataService.chartsWithOptions.length) {
-							this.chartsDataService.setChartsData(res)
-						}
-						this.configuredData = this.chartsDataService.chartsWithOptions
-					} else {
-						const paramsData: IParamsData = {
-							type: Object.getOwnPropertyNames(params)[0],
-							id: params[Object.getOwnPropertyNames(params)[0]]
-						}
-						this.chartsDataService.setChartsData(res, paramsData)
-						this.configuredData = this.chartsDataService.chartsWithSumOptions
-					}
-				})
-			},
-			error: (error) => {
-				this.error = error.message
-			},
-			complete: () => {
-				this.isLoading = false
-			}
+		this.subscriptionData = this.apiService.getData1().pipe(
+			switchMap((res) => {
+				this.data = res
+				return this.route.queryParams
+			})
+		).subscribe((params) => {
+			this.setData(params)
+			this.isLoading = false
 		})
 	}
 
+	setData(params: Params){
+		if (!Object.getOwnPropertyNames(params).length) {
+			if (!this.chartsDataService.chartsWithOptions.length) {
+				this.chartsDataService.setChartsData(this.data)
+			}
+			this.configuredData = this.chartsDataService.chartsWithOptions
+		} else {
+			const paramsData: IParamsData = {
+				type: Object.getOwnPropertyNames(params)[0],
+				id: params[Object.getOwnPropertyNames(params)[0]]
+			}
+			this.chartsDataService.setChartsData(this.data, paramsData)
+			this.configuredData = this.chartsDataService.chartsWithSumOptions
+		}
+	}
+
 	ngOnDestroy(): void {
-		this.subscriptionData.unsubscribe()
-		this.subscriptionRoute.unsubscribe()
+		/* this.subscriptionData.unsubscribe()
+		this.subscriptionRoute.unsubscribe() */
 	}
 }
