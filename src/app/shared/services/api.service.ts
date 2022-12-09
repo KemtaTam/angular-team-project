@@ -39,8 +39,8 @@ export class ApiService {
 		)
 	}
 
-	getDataWithParameter(parametrs: { [key: string]: string }): Observable<IData1[]> {
-		return this.http.get<IData1[]>(`${this.baseURL}/data1`, { params: parametrs }).pipe(
+	getDataWithParameter(parameters: { [key: string]: string }): Observable<IData1[]> {
+		return this.http.get<IData1[]>(`${this.baseURL}/data1`, { params: parameters }).pipe(
 			delay(100),
 			catchError((error) => {
 				console.log('Error: ', error.message)

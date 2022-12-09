@@ -1,15 +1,11 @@
 import { Component, Input } from '@angular/core'
-import { finalize, Subscription } from 'rxjs'
+import { finalize, map, Subscription } from 'rxjs'
 import { ApiService } from '../../../shared/services/api.service'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../../services/date.service'
 import { TableService } from '../../services/table.service'
-import { IObj } from '../../interfaces/office'
-
-interface Iqty {
-	qty: number[]
-}
+import { Data, Iwarehouse } from '../../interfaces/interfaces'
 
 @Component({
 	selector: 'app-table-child',
@@ -27,11 +23,11 @@ export class TableChildComponent {
 	sub: Subscription[] = []
 	displayedColumns: string[]
 	displayedColumnsWithArrow: string[]
-	expandedElement?: IObj | null
+	expandedElement?: Iwarehouse | null
 	isLoading = false
-	dataMap?: Map<string, Iqty>
-	currentObj?: IObj
-	@Input() warehousesMap?: any
+	dataArr: Data[] = []
+	currentObj?: Iwarehouse
+	@Input() warehousesArr: Iwarehouse[] = []
 
 	constructor(
 		private apiService: ApiService,
@@ -43,7 +39,7 @@ export class TableChildComponent {
 		this.displayedColumnsWithArrow = this.tableService.displayedColumnsWithArrow
 	}
 
-	getData(elem: IObj): void {
+	getData(elem: Iwarehouse): void {
 		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj === elem) return
 		const dateStartStr = this.dateService.getDate()?.dateStart
@@ -51,16 +47,15 @@ export class TableChildComponent {
 
 		this.currentObj = elem
 		this.isLoading = true
-		const mapWhId = new Map<string, Iqty>()
 		let data$
 		if (dateStartStr && dateEndStr) {
 			data$ = this.apiService.getDataWithParameter({
-				wh_id: elem.key.toString(),
+				wh_id: elem.wh_id.toString(),
 				dt_date_gte: dateStartStr,
 				dt_date_lte: dateEndStr
 			})
 		} else {
-			data$ = this.apiService.getDataWithParameter({ wh_id: elem.key.toString() })
+			data$ = this.apiService.getDataWithParameter({ wh_id: elem.wh_id.toString() })
 		}
 
 		this.sub.push(
@@ -68,26 +63,24 @@ export class TableChildComponent {
 				.pipe(
 					finalize(() => {
 						this.isLoading = false
+					}),
+					map((elem) => {
+						return elem.map((data) => {
+							return {
+								dt_date: data.dt_date,
+								qty: data.qty
+							}
+						})
 					})
 				)
 				.subscribe((data) => {
-					data.forEach((item) => {
-						let date = item.dt_date
-						mapWhId.set(date, {
-							qty: []
-						})
-						const currentDate = mapWhId.get(date)
-						if (!currentDate) return
-						currentDate.qty.push(item.qty)
-					})
-
-					this.dataMap = mapWhId
+					this.dataArr = data
 					return data
 				})
 		)
 	}
-	getChartWhId(key: number): void {
-		this.router?.navigate(['/charts'], { queryParams: { wh_id: `${key}` } })
+	getChartWhId(wh_id: number): void {
+		this.router?.navigate(['/charts'], { queryParams: { wh_id: `${wh_id}` } })
 	}
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {

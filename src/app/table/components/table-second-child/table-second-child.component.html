@@ -1,4 +1,4 @@
-  <table mat-table multiTemplateDataRows [dataSource]="dataMap | keyvalue" class="mat-elevation-z8">
+  <table mat-table multiTemplateDataRows [dataSource]="dataArr" class="mat-elevation-z8">
 
     <ng-container matColumnDef="office_id" >
       <th mat-header-cell *matHeaderCellDef>Офис</th>
@@ -14,7 +14,7 @@
     <!-- State Column -->
     <ng-container matColumnDef="dt_date">
       <th mat-header-cell *matHeaderCellDef>Дата</th>
-      <td mat-cell *matCellDef="let row">{{row.key | date:'dd.MM.yyyy'}}</td>
+      <td mat-cell *matCellDef="let row">{{row.dt_date | date:'dd.MM.yyyy'}}</td>
     </ng-container>
 
     <!-- Created Column -->
@@ -22,7 +22,7 @@
       <th mat-header-cell *matHeaderCellDef>
         Количество
       </th>
-      <td mat-cell *matCellDef="let row">{{row.value.qty}}</td>
+      <td mat-cell *matCellDef="let row">{{row.qty}}</td>
     </ng-container>
 
     <ng-container matColumnDef="expand">

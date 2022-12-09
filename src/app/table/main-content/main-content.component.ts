@@ -2,13 +2,8 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { DateService } from '../services/date.service'
 import { ApiService, IData0 } from '../../shared/services/api.service'
-import { finalize, Observable, Subscription } from 'rxjs'
-import { IOffice } from '../interfaces/office'
-
-interface IMinMax {
-	today: Date
-	sixMonthAgo: Date
-}
+import { finalize, map, Observable, Subscription } from 'rxjs'
+import { IOffice, Iwarehouse } from '../interfaces/interfaces'
 
 @Component({
 	selector: 'app-main-content',
@@ -19,7 +14,7 @@ export class MainContentComponent {
 	sub: Subscription[] = []
 	minDate = this.getMinMax().sixMonthAgo
 	maxDate = this.getMinMax().today
-	mapUniqueOffice = new Map<number, IOffice>()
+	uniqueOfficeArr: IOffice[] = []
 	range = new FormGroup({
 		start: new FormControl<Date | null>(null),
 		end: new FormControl<Date | null>(null)
@@ -27,7 +22,7 @@ export class MainContentComponent {
 	isLoading = false
 
 	constructor(private apiService: ApiService, private dateService: DateService) {}
-	getMinMax(): IMinMax {
+	getMinMax(): { today: Date; sixMonthAgo: Date } {
 		const today = new Date()
 		const sixMonthAgo = new Date(new Date().setMonth(new Date().getMonth() - 6))
 		return {
@@ -37,44 +32,49 @@ export class MainContentComponent {
 	}
 
 	getData(): void {
-		this.mapUniqueOffice = new Map<number, IOffice>()
+		const uniqueOfficeMap = new Map<number, IOffice>()
 		this.dateService.setCurrentDate(this.range.value.start, this.range.value.end)
 		const dateStart = this.dateService.getDate()?.dateStart
 		const dateEnd = this.dateService.getDate()?.dateEnd
+
 		let filterObj$
+
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			if (dateStart && dateEnd)
 				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
 		} else {
 			filterObj$ = this.apiService.getData0()
 		}
-		if (filterObj$) this.makeSub(filterObj$)
-	}
+		if (!filterObj$) return
 
-	makeSub(observable: Observable<IData0[]>): void {
 		this.sub.push(
-			observable
+			filterObj$
 				.pipe(
 					finalize(() => {
 						this.isLoading = false
+					}),
+					map((dataArr) => {
+						dataArr.forEach((data) => {
+							if (!uniqueOfficeMap.has(data.office_id)) {
+								uniqueOfficeMap.set(data.office_id, {
+									office_id: data.office_id,
+									totalQty: 0
+								})
+							}
+							const warehouses = uniqueOfficeMap.get(data.office_id)
+							if (!warehouses) return
+							warehouses.totalQty += data.qty
+						})
 					})
 				)
 				.subscribe((item) => {
-					item.forEach((elem: IData0) => {
-						if (!this.mapUniqueOffice.has(elem.office_id)) {
-							this.mapUniqueOffice.set(elem.office_id, {
-								office_id: elem.office_id,
-								totalQty: 0
-							})
-						}
-						let uniqueOffice = this.mapUniqueOffice.get(elem.office_id)
-						if (!uniqueOffice) return
-						uniqueOffice.totalQty += elem.qty
-					})
+					this.uniqueOfficeArr = [...uniqueOfficeMap.values()]
 					return item
 				})
 		)
 	}
+
+	makeSub(observable: Observable<IData0[]>): void {}
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {
 			subscriber.unsubscribe()
