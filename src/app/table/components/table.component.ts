@@ -45,25 +45,23 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		this.officeMap = new Map<number, IOffice>()
-		if (!this.dateObj) return
-		const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
-		const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
+		const dateStart = this.dateService.getDate()?.dateStart
+		const dateEnd = this.dateService.getDate()?.dateEnd
 		let filterObj$
-
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-			if(dateStart && dateEnd) filterObj$ = this.apiService.getDataWithParameter({"dt_date_gte": dateStart, "dt_date_lte": dateEnd})
+			if (dateStart && dateEnd)
+				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
 		} else {
 			filterObj$ = this.apiService.getData0()
 		}
-		if(filterObj$) this.makeSub(filterObj$)
+		if (filterObj$) this.makeSub(filterObj$)
 	}
 
 	getData(elem: IObj): void {
 		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj !== elem) {
-			if (!this.dateObj) return
-			const dateStart = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateStart
-			const dateEnd = this.dateService.getDate(this.dateObj.value.start, this.dateObj.value.end)?.dateEnd
+			const dateStart = this.dateService.getDate()?.dateStart
+			const dateEnd = this.dateService.getDate()?.dateEnd
 			this.currentObj = elem
 			this.isLoading = true
 			let warehousesMap = new Map<number, Iwarehouse>()
@@ -71,11 +69,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 				warehouses$ = this.apiService.getDataWithParameter({
 					office_id: elem.key.toString(),
-					dt_date_gte: dateStart + "",
-					dt_date_lte: dateEnd + ""
+					dt_date_gte: dateStart + '',
+					dt_date_lte: dateEnd + ''
 				})
 			} else {
-				warehouses$ = this.apiService.getDataWithParameter({"office_id": elem.key.toString()})
+				warehouses$ = this.apiService.getDataWithParameter({ office_id: elem.key.toString() })
 			}
 
 			this.sub.push(

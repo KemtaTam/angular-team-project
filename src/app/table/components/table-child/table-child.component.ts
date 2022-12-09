@@ -6,7 +6,6 @@ import { Router } from '@angular/router'
 import { DateService } from '../../services/date.service'
 import { TableService } from '../../services/table.service'
 import { IObj } from '../../interfaces/office'
-import { FormControl, FormGroup } from '@angular/forms'
 
 interface Iqty {
 	qty: number[]
@@ -33,10 +32,7 @@ export class TableChildComponent {
 	dataMap?: Map<string, Iqty>
 	currentObj?: IObj
 	@Input() warehousesMap?: any
-	@Input() dateObj?: FormGroup<{
-		start: FormControl<Date | null>
-		end: FormControl<Date | null>
-	}>
+
 	constructor(
 		private apiService: ApiService,
 		private router: Router,
@@ -50,19 +46,21 @@ export class TableChildComponent {
 	getData(elem: IObj): void {
 		this.expandedElement = this.expandedElement === elem ? null : elem
 		if (this.currentObj === elem) return
-		if (!this.dateObj) return
-		const dateStartStr = this.dateService.getFullDate(this.dateObj?.value.start)
-		const dateEndStr = this.dateService.getFullDate(this.dateObj?.value.end)
+		const dateStartStr = this.dateService.getDate()?.dateStart
+		const dateEndStr = this.dateService.getDate()?.dateEnd
+
 		this.currentObj = elem
 		this.isLoading = true
 		const mapWhId = new Map<string, Iqty>()
 		let data$
 		if (dateStartStr && dateEndStr) {
-			data$ = this.apiService.getDataWithParameter(
-				{"wh_id": elem.key.toString(), "dt_date_gte": dateStartStr, "dt_date_lte": dateEndStr}
-			)
+			data$ = this.apiService.getDataWithParameter({
+				wh_id: elem.key.toString(),
+				dt_date_gte: dateStartStr,
+				dt_date_lte: dateEndStr
+			})
 		} else {
-			data$ = this.apiService.getDataWithParameter({"wh_id": elem.key.toString()})
+			data$ = this.apiService.getDataWithParameter({ wh_id: elem.key.toString() })
 		}
 
 		this.sub.push(

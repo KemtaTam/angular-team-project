@@ -1,17 +1,30 @@
 import { Injectable } from '@angular/core'
 
 interface IDatePicker {
-	dateStart: string
-	dateEnd: string
+	dateStart?: Date | null
+	dateEnd?: Date | null
 }
-
+interface IDateStr {
+	dateStart?: string | null
+	dateEnd?: string | null
+}
 @Injectable({
 	providedIn: 'root'
 })
 export class DateService {
+	currentDate?: IDatePicker = {
+		dateStart: null,
+		dateEnd: null
+	}
 	constructor() {}
 
-	getFullDate(date: Date | null | undefined, local?: 'RU'): string {
+	setCurrentDate(dateStart?: Date | null, dateEnd?: Date | null) {
+		this.currentDate = {
+			dateStart,
+			dateEnd
+		}
+	}
+	getFullDate(date: Date | null | undefined, local?: 'RU'): any {
 		if (!date) return ''
 		let day = date.getDate() <= 9 ? `0${date.getDate()}` : date.getDate()
 		let rightMonth = date.getMonth() + 1 > 12 ? 1 : date.getMonth() + 1
@@ -21,17 +34,15 @@ export class DateService {
 		return local ? `${day + '/' + month + '/' + year}` : `${year + '-' + month + '-' + day}`
 	}
 
-	isCorrectFilterDate(dateStart: Date | string | undefined, dateEnd: Date | string | undefined): boolean {
+	isCorrectFilterDate(dateStart?: Date | string | null, dateEnd?: Date | string | null): boolean {
 		if (!(dateStart && dateEnd)) return false
 		return true
 	}
 
-	getDate(dateStart: Date | undefined | null, dateEnd: Date | undefined | null): IDatePicker | undefined {
-		const startDate = dateStart
-		const endDate = dateEnd
-		if (!(startDate && endDate)) return
-		const dateStartStr = this.getFullDate(startDate)
-		const dateEndStr = this.getFullDate(endDate)
+	getDate(): IDateStr | undefined {
+		if (!(this.currentDate?.dateStart && this.currentDate?.dateEnd)) return
+		const dateStartStr = this.getFullDate(this.currentDate.dateStart)
+		const dateEndStr = this.getFullDate(this.currentDate.dateEnd)
 
 		return {
 			dateStart: dateStartStr,

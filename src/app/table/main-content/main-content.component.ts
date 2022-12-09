@@ -38,8 +38,9 @@ export class MainContentComponent {
 
 	getData(): void {
 		this.mapUniqueOffice = new Map<number, IOffice>()
-		const dateStart = this.dateService.getDate(this.range.value.start, this.range.value.end)?.dateStart
-		const dateEnd = this.dateService.getDate(this.range.value.start, this.range.value.end)?.dateEnd
+		this.dateService.setCurrentDate(this.range.value.start, this.range.value.end)
+		const dateStart = this.dateService.getDate()?.dateStart
+		const dateEnd = this.dateService.getDate()?.dateEnd
 		let filterObj$
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			if (dateStart && dateEnd)
