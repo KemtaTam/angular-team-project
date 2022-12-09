@@ -69,9 +69,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			let warehousesMap = new Map<number, Iwarehouse>()
 			let warehouses$
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-				warehouses$ = this.apiService.getDataWithParameter(
-					`office_id=${elem.key}&dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`
-				)
+				warehouses$ = this.apiService.getDataWithParameter({
+					office_id: elem.key,
+					dt_date_gte: dateStart,
+					dt_date_lte: dateEnd
+				})
 			} else {
 				warehouses$ = this.apiService.getDataWithParameter(`office_id=${elem.key}`)
 			}
