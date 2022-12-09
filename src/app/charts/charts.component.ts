@@ -21,8 +21,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	isLoading = true
 	configuredData: IChartWithOptions[] = []
 	subscriptionData!: Subscription
-	subscriptionRoute!: Subscription
-
 	data!: IData1[]
 
 	constructor(
@@ -60,7 +58,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		/* this.subscriptionData.unsubscribe()
-		this.subscriptionRoute.unsubscribe() */
+		this.subscriptionData.unsubscribe()
 	}
 }
