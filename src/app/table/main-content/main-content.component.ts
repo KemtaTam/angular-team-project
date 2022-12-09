@@ -32,13 +32,12 @@ export class MainContentComponent {
 	}
 
 	getData(): void {
-		const uniqueOfficeMap = new Map<number, IOffice>()
 		this.dateService.setCurrentDate(this.range.value.start, this.range.value.end)
+
 		const dateStart = this.dateService.getDate()?.dateStart
 		const dateEnd = this.dateService.getDate()?.dateEnd
-
+		const uniqueMap = new Map<number, IOffice>()
 		let filterObj$
-
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			if (dateStart && dateEnd)
 				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
@@ -55,26 +54,64 @@ export class MainContentComponent {
 					}),
 					map((dataArr) => {
 						dataArr.forEach((data) => {
-							if (!uniqueOfficeMap.has(data.office_id)) {
-								uniqueOfficeMap.set(data.office_id, {
+							if (!uniqueMap.has(data.office_id)) {
+								uniqueMap.set(data.office_id, {
 									office_id: data.office_id,
 									totalQty: 0
 								})
 							}
-							const warehouses = uniqueOfficeMap.get(data.office_id)
+							const warehouses = uniqueMap.get(data.office_id)
 							if (!warehouses) return
 							warehouses.totalQty += data.qty
 						})
 					})
 				)
 				.subscribe((item) => {
-					this.uniqueOfficeArr = [...uniqueOfficeMap.values()]
+					this.uniqueOfficeArr = [...uniqueMap.values()]
 					return item
 				})
 		)
 	}
-
-	makeSub(observable: Observable<IData0[]>): void {}
+	// makeSub() {
+	// 	const dateStart = this.dateService.getDate()?.dateStart
+	// 	const dateEnd = this.dateService.getDate()?.dateEnd
+	// 	const uniqueMap = new Map<number, IOffice>()
+	// 	let filterObj$
+	// 	if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
+	// 		if (dateStart && dateEnd)
+	// 			filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
+	// 	} else {
+	// 		filterObj$ = this.apiService.getData0()
+	// 	}
+	// 	if (!filterObj$) return
+	//
+	// 	this.sub.push(
+	// 		filterObj$
+	// 			.pipe(
+	// 				finalize(() => {
+	// 					this.isLoading = false
+	// 				}),
+	// 				map((dataArr) => {
+	// 					dataArr.forEach((data) => {
+	// 						if (!uniqueMap.has(data.office_id)) {
+	// 							uniqueMap.set(data.office_id, {
+	// 								office_id: data.office_id,
+	// 								totalQty: 0
+	// 							})
+	// 						}
+	// 						const warehouses = uniqueMap.get(data.office_id)
+	// 						if (!warehouses) return
+	// 						warehouses.totalQty += data.qty
+	// 					})
+	// 				})
+	// 			)
+	// 			.subscribe((item) => {
+	// 				this.uniqueOfficeArr = [...uniqueMap.values()]
+	// 				return item
+	// 			})
+	// 	)
+	// }
+	// makeSub(observable: Observable<IData0[]>): void {}
 	ngOnDestroy(): void {
 		for (let subscriber of this.sub) {
 			subscriber.unsubscribe()

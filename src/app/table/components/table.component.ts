@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core'
 import { ApiService, IData0 } from '../../shared/services/api.service'
-import { finalize, map, Observable, Subscription } from 'rxjs'
+import { finalize, map, Subscription } from 'rxjs'
 import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Router } from '@angular/router'
 import { DateService } from '../services/date.service'
@@ -43,7 +43,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 	ngAfterViewInit(): void {
 		const dateStart = this.dateService.getDate()?.dateStart
 		const dateEnd = this.dateService.getDate()?.dateEnd
-		const uniqueOfficeMap = new Map<number, IOffice>()
+		const uniqueMap = new Map<number, IOffice>()
 		let filterObj$
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 			if (dateStart && dateEnd)
@@ -61,20 +61,20 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 					}),
 					map((dataArr) => {
 						dataArr.forEach((data) => {
-							if (!uniqueOfficeMap.has(data.office_id)) {
-								uniqueOfficeMap.set(data.office_id, {
+							if (!uniqueMap.has(data.office_id)) {
+								uniqueMap.set(data.office_id, {
 									office_id: data.office_id,
 									totalQty: 0
 								})
 							}
-							const warehouses = uniqueOfficeMap.get(data.office_id)
+							const warehouses = uniqueMap.get(data.office_id)
 							if (!warehouses) return
 							warehouses.totalQty += data.qty
 						})
 					})
 				)
 				.subscribe((item) => {
-					this.uniqueOfficeArr = [...uniqueOfficeMap.values()]
+					this.uniqueOfficeArr = [...uniqueMap.values()]
 					return item
 				})
 		)
