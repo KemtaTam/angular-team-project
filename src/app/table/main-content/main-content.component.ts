@@ -42,11 +42,12 @@ export class MainContentComponent {
 		const dateEnd = this.dateService.getDate(this.range.value.start, this.range.value.end)?.dateEnd
 		let filterObj$
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
+			if (dateStart && dateEnd)
+				filterObj$ = this.apiService.getDataWithParameter({ dt_date_gte: dateStart, dt_date_lte: dateEnd })
 		} else {
 			filterObj$ = this.apiService.getData0()
 		}
-		this.makeSub(filterObj$)
+		if (filterObj$) this.makeSub(filterObj$)
 	}
 
 	makeSub(observable: Observable<IData0[]>): void {

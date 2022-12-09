@@ -51,11 +51,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 		let filterObj$
 
 		if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
-			filterObj$ = this.apiService.getDataWithParameter(`dt_date_gte=${dateStart}&dt_date_lte=${dateEnd}`)
+			if(dateStart && dateEnd) filterObj$ = this.apiService.getDataWithParameter({"dt_date_gte": dateStart, "dt_date_lte": dateEnd})
 		} else {
 			filterObj$ = this.apiService.getData0()
 		}
-		this.makeSub(filterObj$)
+		if(filterObj$) this.makeSub(filterObj$)
 	}
 
 	getData(elem: IObj): void {
@@ -70,12 +70,12 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 			let warehouses$
 			if (this.dateService.isCorrectFilterDate(dateStart, dateEnd)) {
 				warehouses$ = this.apiService.getDataWithParameter({
-					office_id: elem.key,
-					dt_date_gte: dateStart,
-					dt_date_lte: dateEnd
+					office_id: elem.key.toString(),
+					dt_date_gte: dateStart + "",
+					dt_date_lte: dateEnd + ""
 				})
 			} else {
-				warehouses$ = this.apiService.getDataWithParameter(`office_id=${elem.key}`)
+				warehouses$ = this.apiService.getDataWithParameter({"office_id": elem.key.toString()})
 			}
 
 			this.sub.push(

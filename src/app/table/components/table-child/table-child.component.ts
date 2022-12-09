@@ -59,10 +59,10 @@ export class TableChildComponent {
 		let data$
 		if (dateStartStr && dateEndStr) {
 			data$ = this.apiService.getDataWithParameter(
-				`wh_id=${elem.key}&dt_date_gte=${dateStartStr}&dt_date_lte=${dateEndStr}`
+				{"wh_id": elem.key.toString(), "dt_date_gte": dateStartStr, "dt_date_lte": dateEndStr}
 			)
 		} else {
-			data$ = this.apiService.getDataWithParameter(`wh_id=${elem.key}`)
+			data$ = this.apiService.getDataWithParameter({"wh_id": elem.key.toString()})
 		}
 
 		this.sub.push(
