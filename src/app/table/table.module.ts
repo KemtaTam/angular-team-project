@@ -1,4 +1,5 @@
-import { RouterModule } from '@angular/router'
+import { TableRoutingModule } from './table-routing.module';
+
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { TableComponent } from './components/table.component'
@@ -29,9 +30,8 @@ import { MainContentComponent } from './main-content/main-content.component'
 		MatInputModule,
 		MatDatepickerModule,
 		ReactiveFormsModule,
-		RouterModule.forChild([{ path: 'main-content', component: MainContentComponent }])
+		TableRoutingModule
 	],
-	exports: [TableComponent],
 	providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }]
 })
 export class TableModule {}
