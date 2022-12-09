@@ -50,7 +50,7 @@ export class ChartsDataService {
 
 	setChartsData(data: IData1[], paramsData?: IParamsData): void {
 		this.chartsData = data
-		this.uniqueWhIds = [...this.getUniqueId(this.chartsData)]
+		this.uniqueWhIds = [...new Set(this.chartsData.map((chart) => chart.wh_id))]
 		if (paramsData) {
 			this.paramsData = paramsData
 			this.chartsWithSumOptions = this.configureDataToSum()
@@ -59,20 +59,10 @@ export class ChartsDataService {
 		}
 	}
 
-	private getUniqueId(data: IData1[]): Set<number> {
-		const uniqueIds = new Set<number>()
-		for (const el of data) {
-			uniqueIds.add(el.wh_id)
-		}
-		return uniqueIds
-	}
-
 	private configureDate(dates: string[]): string[] {
-		const newDates = []
-		for (const date of dates) {
-			newDates.push(date.slice(8, 10) + '-' + date.slice(5, 7) + '-' + date.slice(0, 4))
-		}
-		return newDates
+		return dates.map((date) => {
+			return date.slice(8, 10) + '-' + date.slice(5, 7) + '-' + date.slice(0, 4)
+		})
 	}
 
 	private configureData(uniqueIds: number[]): IChartWithOptions[] {
