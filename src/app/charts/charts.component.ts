@@ -1,4 +1,5 @@
-import { IData1 } from './../shared/services/api.service';
+import { DateService } from './../table/services/date.service'
+import { IData1 } from './../shared/services/api.service'
 import { Subscription, switchMap } from 'rxjs'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Params } from '@angular/router'
@@ -10,6 +11,10 @@ export interface IParamsData {
 	type: string
 	id: string
 }
+interface IDate {
+	[dt_date_gte: string]: string
+	dt_date_lte: string
+}
 
 @Component({
 	selector: 'app-charts',
@@ -19,29 +24,38 @@ export interface IParamsData {
 export class ChartsComponent implements OnInit, OnDestroy {
 	error = ''
 	isLoading = true
-	configuredData: IChartWithOptions[] = []
 	subscriptionData!: Subscription
+	configuredData: IChartWithOptions[] = []
 	data!: IData1[]
 
 	constructor(
 		private apiService: ApiService,
 		private chartsDataService: ChartsDataService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private dateService: DateService
 	) {}
 
 	ngOnInit(): void {
-		this.subscriptionData = this.apiService.getData1().pipe(
-			switchMap((res) => {
-				this.data = res
-				return this.route.queryParams
+		const date = this.dateService.getDate()
+		const params: IDate | {} = date
+			? { dt_date_gte: date.dateStart as string, dt_date_lte: date.dateEnd as string }
+			: {}
+
+		this.subscriptionData = this.apiService
+			.getDataWithParameter(params)
+			.pipe(
+				switchMap((res) => {
+					this.data = res
+					return this.route.queryParams
+				})
+			)
+			.subscribe((params) => {
+				this.setData(params)
+				this.isLoading = false
 			})
-		).subscribe((params) => {
-			this.setData(params)
-			this.isLoading = false
-		})
 	}
 
-	setData(params: Params){
+	setData(params: Params) {
 		if (!Object.getOwnPropertyNames(params).length) {
 			if (!this.chartsDataService.chartsWithOptions.length) {
 				this.chartsDataService.setChartsData(this.data)

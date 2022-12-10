@@ -41,9 +41,9 @@ export class DateService {
 	}
 
 	getDate(): IDateStr | undefined {
-		if (!(this.currentDate?.dateStart && this.currentDate?.dateEnd)) return
-		const dateStartStr = this.getFullDate(this.currentDate.dateStart)
-		const dateEndStr = this.getFullDate(this.currentDate.dateEnd)
+		const dateStartStr = this.getFullDate(this.currentDate?.dateStart)
+		const dateEndStr = this.getFullDate(this.currentDate?.dateEnd)
+		
 		return {
 			dateStart: dateStartStr,
 			dateEnd: dateEndStr
