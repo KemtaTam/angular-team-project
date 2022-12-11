@@ -57,9 +57,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
 	setData(params: Params) {
 		if (!Object.getOwnPropertyNames(params).length) {
-			if (!this.chartsDataService.chartsWithOptions.length) {
-				this.chartsDataService.setChartsData(this.data)
-			}
+			this.chartsDataService.setChartsData(this.data)
 			this.configuredData = this.chartsDataService.chartsWithOptions
 		} else {
 			const paramsData: IParamsData = {
